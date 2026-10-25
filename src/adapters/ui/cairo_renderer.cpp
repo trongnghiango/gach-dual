@@ -193,9 +193,9 @@ void CairoRenderer::draw_story_text(cairo_t* cr, const std::string& text, const 
     cairo_set_source_rgb(cr, 0.05, 0.05, 0.05);
     cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
 
-    // Chữ to rõ ràng, nét đều sans-serif, khoảng cách dòng thoáng đãng
-    double font_size = 38.0;
-    double line_height = 56.0;
+    // Chữ to rõ ràng cho ba mẹ và bé cùng đọc thoải mái từ xa (Font 46px, line-height 66px)
+    double font_size = 46.0;
+    double line_height = 66.0;
     cairo_set_font_size(cr, font_size);
 
     auto lines = wrap_text_lines(cr, text, rect.width);

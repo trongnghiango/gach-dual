@@ -57,10 +57,10 @@ void UILayout::update_resolution(int screen_w, int screen_h) noexcept {
     hero->set_max_height(static_cast<int>(m_screen_height * 0.46));
     root->add_child(hero);
 
-    // Lời Dẫn Truyện (Typography 2 dòng)
-    int line_h = static_cast<int>(56 * scale);
+    // Lời Dẫn Truyện (Typography to rõ ràng cho ba mẹ đọc cùng bé)
+    int line_h = static_cast<int>(66 * scale);
     auto text_card = make_item("story_text");
-    text_card->set_height(2 * line_h + static_cast<int>(20 * scale));
+    text_card->set_height(2 * line_h + static_cast<int>(24 * scale));
     root->add_child(text_card);
 
     // Thẻ Tiêu Điểm Ghép Vần

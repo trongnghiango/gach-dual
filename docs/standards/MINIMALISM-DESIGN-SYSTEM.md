@@ -73,7 +73,7 @@ Chi su dung **Sans-Serif thuan khiet net deu (Geometric Sans-Serif)**. Khong dun
 | **Hero Glyph** | **82 px** | 90 px | **Bold** | #000000 (Den 100%) | Chu cai tren cac manh ghep lua chon cham ngon tay |
 | **Phonics Target** | **72 px** | 80 px | **Bold** | #000000 (Den 100%) | Tu ngu hoan chinh sau khi ghep dung |
 | **Rhyme / Slot** | **66 px** | 76 px | **Bold** | #000000 (Den 100%) | Am vi / Van trong khay tieu diem |
-| **Story Text** | **38 px** | **56 px** | **Bold** | #0D0D0D (Den 95%) | Loi dan chuyen thieu nhi (doc thoang 2 dong) |
+| **Story Text** | **46 px** | **66 px** | **Bold** | #0D0D0D (Den 95%) | Loi dan truyen to ro cho ba me doc cung be thoai mai |
 | **Button CTA** | **36 px** | 44 px | **Bold** | #FFFFFF tren nen den | Nut chuyen trang chinh (Primary Action) |
 | **Meta / Status**| **22 px** | 28 px | **Normal**| #737373 (Xam 45%) | Chi so trang, thong so phu |
 | **Utility Label**| **19 px** | 24 px | **Normal**| #595959 (Xam 35%) | Nhan nut Thoat, nut Quay lai, nut Nghe lai |
