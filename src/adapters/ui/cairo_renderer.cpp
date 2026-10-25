@@ -211,12 +211,14 @@ void CairoRenderer::draw_image(cairo_t* cr, const std::string& image_path, const
 
 void CairoRenderer::draw_story_text(cairo_t* cr, const std::string& text, const Rect& rect) {
     cairo_save(cr);
-    cairo_set_source_rgb(cr, 0.05, 0.05, 0.05);
-    cairo_select_font_face(cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    // Màu đen tuyệt đối (High-contrast E-Ink)
+    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
+    // Font không chân (Sans-Serif) tròn trịa, dứt khoát, dễ đọc cho trẻ, không râu ria
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
 
-    // Kích thước font chữ to, chuẩn sách thiếu nhi trên màn hình 300 PPI
-    double font_size = 38.0;
-    double line_height = 54.0;
+    // Chữ to rõ ràng, nét dứt khoát trên màn hình 300 PPI
+    double font_size = 44.0;
+    double line_height = 62.0;
     cairo_set_font_size(cr, font_size);
 
     auto lines = wrap_text_lines(cr, text, rect.width);
@@ -256,7 +258,7 @@ void CairoRenderer::draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat
 
     if (fsm.state() == domain::BeatState::TRANSFORM || fsm.state() == domain::BeatState::COMPLETED) {
         // Trạng thái đã ghép đúng / hoàn thành: Chữ to nổi bật, đậm đà
-        cairo_set_font_size(cr, 52.0);
+        cairo_set_font_size(cr, 56.0);
         cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
         std::string text = "Từ hoàn chỉnh:   " + std::string(beat.syllable().full_word());
@@ -269,8 +271,8 @@ void CairoRenderer::draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat
         cairo_show_text(cr, text.c_str());
     } else {
         // Trạng thái chờ ghép: Hiển thị công thức trực quan to rõ
-        cairo_set_font_size(cr, 46.0);
-        cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
+        cairo_set_font_size(cr, 50.0);
+        cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
         std::string label;
         if (beat.missing_part() == domain::MissingPart::ONSET) {
@@ -321,10 +323,10 @@ void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, con
             cairo_stroke(cr);
         }
 
-        // Chữ cái to tròn (Font 68px bold) cho trẻ dễ nhìn
+        // Chữ cái to rõ nét (Font 78px bold sans-serif) cho trẻ dễ nhìn, không râu ria
         cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
         cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 68.0);
+        cairo_set_font_size(cr, 78.0);
 
         std::string_view text = beat.choices()[i].display_text();
         cairo_text_extents_t ext;
