@@ -96,7 +96,8 @@ gboolean GtkTouchAdapter::on_timer_tick_event(gpointer user_data) {
         self->m_interactor.on_timer_tick(100);
         gtk_widget_queue_draw(self->m_drawing_area);
     }
-    return G_SOURCE_CONTINUE;
+    // Dùng TRUE để tương thích 100% với các phiên bản GLib cũ trên Kindle OS (trước GLib 2.32)
+    return TRUE;
 }
 
 } // namespace gach::adapters::ui

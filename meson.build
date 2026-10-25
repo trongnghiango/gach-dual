@@ -56,7 +56,7 @@ executable(
   sources,
   include_directories: include_directories('src'),
   dependencies: deps,
-  cpp_args: ['-static-libstdc++', '-static-libgcc', '-fpermissive'],
+  cpp_args: ['-static-libstdc++', '-static-libgcc', '-fpermissive', '-Wno-parentheses'],
   link_args: ['-static-libstdc++', '-static-libgcc'],
   install: true
 )

@@ -1,6 +1,14 @@
 #pragma once
 
 #include <gtk/gtk.h>
+
+#ifndef G_SOURCE_CONTINUE
+#define G_SOURCE_CONTINUE TRUE
+#endif
+#ifndef G_SOURCE_REMOVE
+#define G_SOURCE_REMOVE FALSE
+#endif
+
 #include "application/story_interactor.hpp"
 #include "adapters/ui/cairo_renderer.hpp"
 
