@@ -181,8 +181,10 @@ fi
 
 # 6. Làm sạch toàn bộ ứng dụng cũ và logs trên Kindle
 echo -e "${CYAN}[4/6] Làm sạch toàn bộ ứng dụng cũ và logs trên Kindle...${NC}"
+# Quét sạch cả các thư mục bị đặt nhầm vị trí từ lần cài trước nếu có
+rm -rf "$KINDLE_DIR/gach" 2>/dev/null || true
+rm -rf "$KINDLE_DIR/extensions/extensions" 2>/dev/null || true
 if [ -d "$TARGET_DIR" ]; then
-    # Xóa các file nhật ký tạm bợ, journal SQLite nếu có
     find "$TARGET_DIR" -type f \( -name "*.log" -o -name "*.db-journal" -o -name "*.db-wal" -o -name "*.db-shm" -o -name ".DS_Store" \) -delete 2>/dev/null || true
     rm -rf "$TARGET_DIR"
     echo "  ✓ Đã gỡ bỏ sạch sẽ thư mục ứng dụng cũ: $TARGET_DIR"
@@ -265,10 +267,14 @@ echo -e "${GREEN}${BOLD}========================================================
 echo -e "${GREEN}${BOLD}         ✅ CÀI ĐẶT GACH THÀNH CÔNG LÊN MÁY ĐỌC SÁCH KINDLE!          ${NC}"
 echo -e "${GREEN}${BOLD}======================================================================${NC}"
 echo -e "Cấu trúc thư mục đã cài đặt tại: ${CYAN}$TARGET_DIR${NC}"
-echo -e "  - Binary: ${BOLD}$TARGET_DIR/bin/gach${NC} (81 KB)"
-echo -e "  - Launcher: ${BOLD}$TARGET_DIR/bin/start.sh${NC} (FAT32 access(F_OK) guard)"
-echo -e "  - Database: ${BOLD}$TARGET_DIR/data/story_engine.db${NC} (3NF Schema, 500KB cache cap)"
-echo -e "  - Hình ảnh: ${BOLD}$TARGET_DIR/assets/images/${NC} (6 ảnh Grayscale PNG 1-channel)"
+echo -e "Kiểm tra thực tế các tệp trong ${BOLD}$TARGET_DIR${NC}:"
+ls -la "$TARGET_DIR"
+echo ""
+echo -e "Kiểm tra file cấu hình KUAL (${BOLD}$TARGET_DIR/config.xml${NC}):"
+cat "$TARGET_DIR/config.xml"
+echo ""
+echo -e "Kiểm tra menu KUAL (${BOLD}$TARGET_DIR/menu.json${NC}):"
+cat "$TARGET_DIR/menu.json"
 echo ""
 
 # Hỏi người dùng có muốn ngắt kết nối an toàn (Eject) không
