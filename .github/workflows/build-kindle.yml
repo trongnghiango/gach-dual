@@ -61,6 +61,9 @@ jobs:
           chmod +x ./gen-sdk.sh
           ./gen-sdk.sh "$TARGET"
 
+          echo "Restoring write permissions to patch legacy Amazon headers in sysroot..."
+          chmod -R u+w "$HOME/x-tools"
+
           echo "Patching legacy Amazon GTK 2.0 headers in sysroot..."
           find "$HOME/x-tools" -name 'gtkstatusicon.h' -exec sed -i 's/__gtk_reserved\([1-4]\));/__gtk_reserved\1)(void);/g' {} +
           echo "Verifying patched gtkstatusicon.h:"
