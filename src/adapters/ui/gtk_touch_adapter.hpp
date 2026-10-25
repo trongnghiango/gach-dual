@@ -9,6 +9,17 @@
 #define G_SOURCE_REMOVE FALSE
 #endif
 
+// Tương thích mã phím giữa GTK 2.0 (Kindle) và GTK 3.0 (Desktop)
+#ifndef GDK_KEY_Escape
+#define GDK_KEY_Escape 0xff1b
+#endif
+#ifndef GDK_KEY_q
+#define GDK_KEY_q 'q'
+#endif
+#ifndef GDK_KEY_Q
+#define GDK_KEY_Q 'Q'
+#endif
+
 #include "application/story_interactor.hpp"
 #include "adapters/ui/cairo_renderer.hpp"
 

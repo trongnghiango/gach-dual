@@ -135,7 +135,7 @@ gboolean GtkTouchAdapter::on_button_press_event([[maybe_unused]] GtkWidget* widg
 gboolean GtkTouchAdapter::on_key_press_event([[maybe_unused]] GtkWidget* widget, GdkEventKey* event, gpointer) {
     if (!event) return FALSE;
     // Phím Escape hoặc Q để thoát nhanh trên desktop
-    if (event->keyval == GDK_KEY_Escape || event->keyval == GDK_KEY_q || event->keyval == GDK_KEY_Q) {
+    if (event->keyval == 0xff1b || event->keyval == 'q' || event->keyval == 'Q') {
         std::cout << "[INFO] Quit key pressed. Exiting GACH cleanly..." << std::endl;
         gtk_main_quit();
         return TRUE;
