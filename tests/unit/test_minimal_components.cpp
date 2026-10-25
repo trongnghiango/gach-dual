@@ -16,6 +16,7 @@ void test_components_render_smoke() {
     MinimalComponents::draw_utility_pill(cr, 160, 50, 95, 36, "Quay lai", MinimalComponents::UtilityIcon::BACK);
     MinimalComponents::draw_utility_pill(cr, 270, 50, 95, 36, "Nghe", MinimalComponents::UtilityIcon::REPLAY);
     MinimalComponents::draw_utility_pill(cr, 380, 50, 95, 36, "Muc luc", MinimalComponents::UtilityIcon::MENU);
+    MinimalComponents::draw_utility_pill(cr, 490, 50, 95, 36, "Cai dat", MinimalComponents::UtilityIcon::SETTINGS);
 
     // 2. Action pills
     MinimalComponents::draw_action_pill(cr, 50, 120, 480, 100, "Tiep tuc sang trang ->", MinimalComponents::ButtonStyle::PRIMARY_SOLID);
@@ -36,6 +37,13 @@ void test_components_render_smoke() {
 
     // 6. Modal dialog
     MinimalComponents::draw_modal_dialog(cr, W, H, "Nghi ngoi", "Be co muon tam dung sach khong?", "Thoat", "Doc tiep");
+
+    // 7. Table of Contents Overlay
+    std::vector<std::string> words = {"chao", "rau", "com", "rac", "tuoi", "dep", "tao", "em", "ban", "la", "mua", "ngu", "sau", "nuoc", "gon", "nha"};
+    MinimalComponents::draw_toc_overlay(cr, W, H, 1, words);
+
+    // 8. Settings Overlay
+    MinimalComponents::draw_settings_overlay(cr, W, H, true);
 
     cairo_destroy(cr);
     cairo_surface_destroy(surface);

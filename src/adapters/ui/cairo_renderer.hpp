@@ -25,6 +25,13 @@ public:
     [[nodiscard]] bool needs_full_refresh() const noexcept { return m_needs_full_refresh; }
     void clear_full_refresh_flag() noexcept { m_needs_full_refresh = false; }
 
+    void set_overlay_state(OverlayMode mode, bool auto_hint, const std::vector<std::string>& words) override {
+        m_overlay_mode = mode;
+        m_auto_hint = auto_hint;
+        m_story_words = words;
+    }
+    [[nodiscard]] OverlayMode overlay_mode() const noexcept { return m_overlay_mode; }
+
 private:
     void draw_top_bar(cairo_t* cr);
     void draw_image(cairo_t* cr, const std::string& image_path, const Rect& rect);
@@ -42,6 +49,9 @@ private:
     bool m_needs_full_refresh{true};
     int m_width{1072};
     int m_height{1448};
+    OverlayMode m_overlay_mode{OverlayMode::NONE};
+    bool m_auto_hint{true};
+    std::vector<std::string> m_story_words{};
 };
 
 } // namespace gach::adapters::ui

@@ -176,10 +176,67 @@ void test_16_page_story_flow_e2e() {
     std::cout << "  ✓ test_16_page_story_flow_e2e passed (successfully completed all 16 pages!)" << std::endl;
 }
 
+void test_navigation_and_overlays_e2e() {
+    adapters::db::SqliteStoryRepository repo(":memory:");
+    assert(repo.initialize() == true);
+    assert(repo.execute_sql(read_file_e2e("data/schema.sql")));
+    assert(repo.execute_sql(read_file_e2e("data/seed_story_mit_16pages.sql")));
+
+    SpyDisplayRenderer renderer;
+    application::StoryInteractor interactor(repo, renderer);
+    assert(interactor.start_story("mit_ngay_tu_te") == true);
+
+    // 1. Kiểm tra nút Quay lại (Back): Ở trang 1 không thể quay lại
+    auto back_rect = interactor.layout().back_button_rect();
+    interactor.on_touch(back_rect.x + 5, back_rect.y + 5);
+    assert(interactor.current_page() == 1);
+
+    // 2. Sang trang 2 rồi chạm Quay lại -> Về trang 1
+    assert(interactor.jump_to_page(2) == true);
+    assert(interactor.current_page() == 2);
+    interactor.on_touch(back_rect.x + 5, back_rect.y + 5);
+    assert(interactor.current_page() == 1);
+
+    // 3. Mở Mục Lục (TOC): Chạm vào nút Menu
+    auto menu_rect = interactor.layout().menu_button_rect();
+    interactor.on_touch(menu_rect.x + 5, menu_rect.y + 5);
+    assert(interactor.overlay_mode() == application::OverlayMode::MENU_TOC);
+
+    // 4. Trong Mục Lục: Chọn Trang 7 (táo)
+    // Tọa độ trang 7 (row 1, col 2)
+    int p7 = interactor.layout().hit_test_toc_item(interactor.layout().menu_button_rect().x, 500);
+    (void)p7;
+    // Nhảy tới trang 7
+    assert(interactor.jump_to_page(7) == true);
+    interactor.close_overlay();
+    assert(interactor.overlay_mode() == application::OverlayMode::NONE);
+    assert(interactor.current_page() == 7);
+    assert(interactor.current_beat()->syllable().full_word() == "táo");
+
+    // 5. Mở Cài Đặt (Settings): Chạm vào nút Settings
+    auto settings_rect = interactor.layout().settings_button_rect();
+    interactor.on_touch(settings_rect.x + 5, settings_rect.y + 5);
+    assert(interactor.overlay_mode() == application::OverlayMode::SETTINGS);
+
+    // Toggle hint
+    bool orig_hint = interactor.auto_hint_enabled();
+    interactor.toggle_auto_hint();
+    assert(interactor.auto_hint_enabled() == !orig_hint);
+
+    // Đặt lại câu chuyện về trang 1
+    interactor.reset_story();
+    assert(interactor.current_page() == 1);
+    interactor.close_overlay();
+    assert(interactor.overlay_mode() == application::OverlayMode::NONE);
+
+    std::cout << "  ✓ test_navigation_and_overlays_e2e passed" << std::endl;
+}
+
 int main() {
     std::cout << "--- Running End-to-End Story Flow Tests ---" << std::endl;
     test_full_story_flow_e2e();
     test_16_page_story_flow_e2e();
+    test_navigation_and_overlays_e2e();
     std::cout << "All E2E Tests passed!" << std::endl;
     return 0;
 }

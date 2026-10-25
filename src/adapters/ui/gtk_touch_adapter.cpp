@@ -119,8 +119,9 @@ gboolean GtkTouchAdapter::on_button_press_event([[maybe_unused]] GtkWidget* widg
 
     if (virt_x >= 0 && virt_x <= self->m_virtual_w &&
         virt_y >= 0 && virt_y <= self->m_virtual_h) {
-        // Kiểm tra nút Thoát ứng dụng
-        if (self->m_interactor.layout().hit_test_exit(static_cast<int>(virt_x), static_cast<int>(virt_y))) {
+        // Kiểm tra nút Thoát ứng dụng (chỉ khi không có overlay nào mở)
+        if (self->m_interactor.overlay_mode() == application::OverlayMode::NONE &&
+            self->m_interactor.layout().hit_test_exit(static_cast<int>(virt_x), static_cast<int>(virt_y))) {
             std::cout << "[INFO] Exit button touched. Exiting GACH cleanly..." << std::endl;
             gtk_main_quit();
             return TRUE;
@@ -132,10 +133,17 @@ gboolean GtkTouchAdapter::on_button_press_event([[maybe_unused]] GtkWidget* widg
     return TRUE;
 }
 
-gboolean GtkTouchAdapter::on_key_press_event([[maybe_unused]] GtkWidget* widget, GdkEventKey* event, gpointer) {
+gboolean GtkTouchAdapter::on_key_press_event([[maybe_unused]] GtkWidget* widget, GdkEventKey* event, gpointer user_data) {
     if (!event) return FALSE;
-    // Phím Escape hoặc Q để thoát nhanh trên desktop
+    auto* self = static_cast<GtkTouchAdapter*>(user_data);
+    // Phím Escape hoặc Q để thoát hoặc đóng overlay
     if (event->keyval == 0xff1b || event->keyval == 'q' || event->keyval == 'Q') {
+        if (self && self->m_interactor.overlay_mode() != application::OverlayMode::NONE) {
+            std::cout << "[INFO] Escape pressed. Closing overlay..." << std::endl;
+            self->m_interactor.close_overlay();
+            gtk_widget_queue_draw(self->m_drawing_area);
+            return TRUE;
+        }
         std::cout << "[INFO] Quit key pressed. Exiting GACH cleanly..." << std::endl;
         gtk_main_quit();
         return TRUE;

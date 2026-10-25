@@ -102,17 +102,40 @@ void CairoRenderer::draw_to_context(cairo_t* cr) {
     if (m_current_fsm->state() == domain::BeatState::COMPLETED) {
         draw_next_button(cr, m_layout.next_button_rect());
     }
+
+    // 8. Nếu đang mở Mục Lục hoặc Cài Đặt, vẽ Modal Overlay lên trên cùng
+    if (m_overlay_mode == OverlayMode::MENU_TOC) {
+        MinimalComponents::draw_toc_overlay(cr, m_width, m_height, m_current_beat ? m_current_beat->page_number() : 1, m_story_words);
+    } else if (m_overlay_mode == OverlayMode::SETTINGS) {
+        MinimalComponents::draw_settings_overlay(cr, m_width, m_height, m_auto_hint);
+    }
 }
 
 void CairoRenderer::draw_top_bar(cairo_t* cr) {
     if (!m_current_beat) return;
 
-    // 1. Chỉ số trang thanh nhã ở chính giữa đỉnh
-    MinimalComponents::draw_page_tracker(cr, m_width / 2.0, 44.0,
+    // 1. Nút Quay lại (←) ở bên trái
+    Rect br = m_layout.back_button_rect();
+    bool can_go_back = (m_current_beat->page_number() > 1);
+    MinimalComponents::draw_utility_pill(cr, br.x, br.y, br.width, br.height,
+                                        "Quay lai", MinimalComponents::UtilityIcon::BACK, !can_go_back);
+
+    // 2. Nút Mục lục (☰)
+    Rect mr = m_layout.menu_button_rect();
+    MinimalComponents::draw_utility_pill(cr, mr.x, mr.y, mr.width, mr.height,
+                                        "Muc luc", MinimalComponents::UtilityIcon::MENU);
+
+    // 3. Chỉ số trang thanh nhã ở chính giữa đỉnh
+    MinimalComponents::draw_page_tracker(cr, m_width / 2.0, br.y + br.height - 12.0,
                                          m_current_beat->page_number(),
                                          m_current_beat->total_pages());
 
-    // 2. Nút Thoát tối giản dạng Floating Utility Pill ở góc trên bên phải
+    // 4. Nút Cài đặt (⚙)
+    Rect sr = m_layout.settings_button_rect();
+    MinimalComponents::draw_utility_pill(cr, sr.x, sr.y, sr.width, sr.height,
+                                        "Cai dat", MinimalComponents::UtilityIcon::SETTINGS);
+
+    // 5. Nút Thoát (✕) ở góc trên bên phải
     Rect er = m_layout.exit_button_rect();
     MinimalComponents::draw_utility_pill(cr, er.x, er.y, er.width, er.height,
                                         "Thoat", MinimalComponents::UtilityIcon::CLOSE);

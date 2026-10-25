@@ -18,10 +18,11 @@ public:
     static void draw_rounded_rect(cairo_t* cr, double x, double y, double w, double h, double r);
 
     // 1. NÚT TIỆN ÍCH ĐỈNH MÀN HÌNH (Floating Utility Pill)
-    // Loại icon hỗ trợ: CLOSE (✕), BACK (←), REPLAY (🔊), MENU (☰)
-    enum class UtilityIcon { NONE, CLOSE, BACK, REPLAY, MENU };
+    // Loại icon hỗ trợ: CLOSE (✕), BACK (←), REPLAY (🔊), MENU (☰), SETTINGS (⚙)
+    enum class UtilityIcon { NONE, CLOSE, BACK, REPLAY, MENU, SETTINGS };
     static void draw_utility_pill(cairo_t* cr, double x, double y, double w, double h,
-                                  std::string_view label, UtilityIcon icon = UtilityIcon::NONE);
+                                  std::string_view label, UtilityIcon icon = UtilityIcon::NONE,
+                                  bool disabled = false);
 
     // 2. NÚT HÀNH ĐỘNG CHÍNH / PHỤ (Action Pill CTA)
     enum class ButtonStyle {
@@ -55,6 +56,13 @@ public:
     static void draw_modal_dialog(cairo_t* cr, double screen_w, double screen_h,
                                   std::string_view title, std::string_view message,
                                   std::string_view primary_btn, std::string_view secondary_btn);
+
+    // 7. HỘP THOẠI MỤC LỤC TRUYỆN (Table of Contents Modal)
+    static void draw_toc_overlay(cairo_t* cr, int screen_w, int screen_h, uint32_t active_page,
+                                 const std::vector<std::string>& words);
+
+    // 8. HỘP THOẠI CÀI ĐẶT ỨNG DỤNG (Settings Modal)
+    static void draw_settings_overlay(cairo_t* cr, int screen_w, int screen_h, bool auto_hint);
 };
 
 } // namespace gach::adapters::ui
