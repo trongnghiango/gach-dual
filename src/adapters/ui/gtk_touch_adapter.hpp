@@ -29,6 +29,7 @@ private:
     static gboolean on_expose_event(GtkWidget* widget, GdkEventExpose* event, gpointer user_data);
 #endif
     static gboolean on_button_press_event(GtkWidget* widget, GdkEventButton* event, gpointer user_data);
+    static gboolean on_key_press_event(GtkWidget* widget, GdkEventKey* event, gpointer user_data);
     static gboolean on_timer_tick_event(gpointer user_data);
 
     application::StoryInteractor& m_interactor;

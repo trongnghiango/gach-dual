@@ -41,6 +41,7 @@ void GtkTouchAdapter::initialize(int argc, char** argv, int width, int height) {
     g_signal_connect(m_drawing_area, "expose-event", G_CALLBACK(on_expose_event), this);
 #endif
     g_signal_connect(m_drawing_area, "button-press-event", G_CALLBACK(on_button_press_event), this);
+    g_signal_connect(m_window, "key-press-event", G_CALLBACK(on_key_press_event), this);
 
     // Renderer luôn tính toán bố cục ở độ phân giải ảo chuẩn PW3
     m_renderer.set_resolution(m_virtual_w, m_virtual_h);
@@ -118,10 +119,28 @@ gboolean GtkTouchAdapter::on_button_press_event([[maybe_unused]] GtkWidget* widg
 
     if (virt_x >= 0 && virt_x <= self->m_virtual_w &&
         virt_y >= 0 && virt_y <= self->m_virtual_h) {
+        // Kiểm tra nút Thoát ứng dụng
+        if (self->m_interactor.layout().hit_test_exit(static_cast<int>(virt_x), static_cast<int>(virt_y))) {
+            std::cout << "[INFO] Exit button touched. Exiting GACH cleanly..." << std::endl;
+            gtk_main_quit();
+            return TRUE;
+        }
+
         self->m_interactor.on_touch(static_cast<int>(virt_x), static_cast<int>(virt_y));
         gtk_widget_queue_draw(self->m_drawing_area);
     }
     return TRUE;
+}
+
+gboolean GtkTouchAdapter::on_key_press_event([[maybe_unused]] GtkWidget* widget, GdkEventKey* event, gpointer) {
+    if (!event) return FALSE;
+    // Phím Escape hoặc Q để thoát nhanh trên desktop
+    if (event->keyval == GDK_KEY_Escape || event->keyval == GDK_KEY_q || event->keyval == GDK_KEY_Q) {
+        std::cout << "[INFO] Quit key pressed. Exiting GACH cleanly..." << std::endl;
+        gtk_main_quit();
+        return TRUE;
+    }
+    return FALSE;
 }
 
 gboolean GtkTouchAdapter::on_timer_tick_event(gpointer user_data) {

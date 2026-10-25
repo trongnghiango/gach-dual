@@ -55,6 +55,17 @@ void UILayout::update_resolution(int screen_w, int screen_h) noexcept {
         btn_y = m_screen_height - btn_h - 15;
     }
     m_next_btn_rect = Rect{ btn_x, btn_y, btn_w, btn_h };
+
+    // 6. Nút Thoát (Exit Button) ở góc trên bên phải
+    int exit_w = static_cast<int>(130 * s);
+    int exit_h = static_cast<int>(40 * s);
+    int exit_x = m_screen_width - exit_w - margin_x;
+    int exit_y = static_cast<int>(8 * s);
+    m_exit_btn_rect = Rect{ exit_x, exit_y, exit_w, exit_h };
+}
+
+bool UILayout::hit_test_exit(int px, int py) const noexcept {
+    return m_exit_btn_rect.contains(px, py);
 }
 
 Rect UILayout::choice_rect(uint8_t index) const noexcept {

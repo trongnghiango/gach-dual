@@ -148,6 +148,30 @@ void CairoRenderer::draw_top_bar(cairo_t* cr) {
     double x = (m_width - ext.width) / 2.0;
     cairo_move_to(cr, x, 32);
     cairo_show_text(cr, page_info.c_str());
+
+    // Nút Thoát ứng dụng ở góc trên bên phải
+    Rect er = m_layout.exit_button_rect();
+    cairo_set_source_rgb(cr, 0.95, 0.95, 0.95);
+    draw_rounded_rect(cr, er.x, er.y, er.width, er.height, 8.0);
+    cairo_fill(cr);
+
+    cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
+    cairo_set_line_width(cr, 2.0);
+    draw_rounded_rect(cr, er.x, er.y, er.width, er.height, 8.0);
+    cairo_stroke(cr);
+
+    cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 22.0);
+
+    std::string exit_text = "Thoat [x]";
+    cairo_text_extents_t e_ext;
+    cairo_text_extents(cr, exit_text.c_str(), &e_ext);
+    double ex = er.x + (er.width - e_ext.width) / 2.0;
+    double ey = er.y + (er.height + e_ext.height) / 2.0 - 2;
+    cairo_move_to(cr, ex, ey);
+    cairo_show_text(cr, exit_text.c_str());
+
     cairo_restore(cr);
 }
 
