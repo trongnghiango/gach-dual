@@ -1,0 +1,32 @@
+# Build outputs & Object files
+build/
+bin/
+*.o
+*.a
+*.so
+*.dylib
+*.out
+
+# Test binaries
+test_*
+/tmp_test_*
+
+# SQLite temporary and runtime files
+*.db-journal
+*.db-wal
+*.db-shm
+story_engine.db
+
+# KUAL packaging artifacts
+*.zip
+extension/gach/bin/gach
+
+# Editor & OS files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Logs
+*.log
