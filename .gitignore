@@ -8,7 +8,7 @@ bin/
 *.out
 
 # Test binaries
-test_*
+/test_*
 /tmp_test_*
 
 # SQLite temporary and runtime files
