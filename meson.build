@@ -12,6 +12,8 @@ project(
   meson_version: '>=1.1'
 )
 
+cpp = meson.get_compiler('cpp')
+
 gtk_version = get_option('gtk_version')
 
 if gtk_version == 'auto'
@@ -23,8 +25,18 @@ else
   gtk_dep = dependency(gtk_version, required: true)
 endif
 
-cairo_dep = dependency('cairo', required: true)
-sqlite_dep = dependency('sqlite3', required: true)
+deps = [gtk_dep]
+
+cairo_dep = dependency('cairo', required: false)
+if cairo_dep.found()
+  deps += cairo_dep
+endif
+
+sqlite_dep = dependency('sqlite3', required: false)
+if not sqlite_dep.found()
+  sqlite_dep = cpp.find_library('sqlite3', required: true)
+endif
+deps += sqlite_dep
 
 sources = files(
   'src/domain/phonics_syllable.cpp',
@@ -43,8 +55,8 @@ executable(
   'gach',
   sources,
   include_directories: include_directories('src'),
-  dependencies: [gtk_dep, cairo_dep, sqlite_dep],
-  cpp_args: ['-static-libstdc++', '-static-libgcc'],
+  dependencies: deps,
+  cpp_args: ['-static-libstdc++', '-static-libgcc', '-fpermissive'],
   link_args: ['-static-libstdc++', '-static-libgcc'],
   install: true
 )
