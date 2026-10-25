@@ -220,8 +220,23 @@ else
     fi
 fi
 
-echo "  Đang giải nén gói cài đặt lên phân vùng Kindle..."
-unzip -q -o "$ZIP_FILE" -d "$KINDLE_DIR/"
+echo "  Đang giải nén gói cài đặt vào $EXT_DIR/gach/..."
+TEMP_UNPACK="/tmp/gach_unpack_$$"
+rm -rf "$TEMP_UNPACK"
+mkdir -p "$TEMP_UNPACK"
+unzip -q -o "$ZIP_FILE" -d "$TEMP_UNPACK/"
+
+mkdir -p "$EXT_DIR"
+rm -rf "$TARGET_DIR"
+if [ -d "$TEMP_UNPACK/extensions/gach" ]; then
+    cp -r "$TEMP_UNPACK/extensions/gach" "$EXT_DIR/"
+elif [ -d "$TEMP_UNPACK/gach" ]; then
+    cp -r "$TEMP_UNPACK/gach" "$EXT_DIR/"
+else
+    echo -e "  ${RED}[LỖI] Cấu trúc file zip không hợp lệ.${NC}"
+    exit 1
+fi
+rm -rf "$TEMP_UNPACK"
 
 # Khôi phục database cũ nếu ở chế độ KEEP_DATA
 if [ "$CLEAN_DATA_MODE" = "keep" ] && [ -d "$BACKUP_DIR/data" ]; then

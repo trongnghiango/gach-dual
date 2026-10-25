@@ -1,9 +1,9 @@
 {
-    "items": [
-        {
-            "name": "GACH Story Phonics (Bé Mít)",
-            "priority": 1,
-            "action": "bin/start.sh"
-        }
-    ]
+  "items": [
+    {
+      "name": "GACH Story Phonics",
+      "priority": 1,
+      "action": "bin/start.sh"
+    }
+  ]
 }

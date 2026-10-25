@@ -5,7 +5,7 @@ echo "=== GACH Engine: Đóng Gói KUAL Extension Cho Kindle PW2/PW3 ==="
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
-BUILD_DIR="$ROOT_DIR/dist/extensions/gach"
+BUILD_DIR="$ROOT_DIR/dist/gach"
 OUTPUT_ZIP="$ROOT_DIR/gach-kual.zip"
 
 rm -rf "$ROOT_DIR/dist" "$OUTPUT_ZIP"
@@ -41,7 +41,7 @@ fi
 
 # 5. Đóng gói ZIP chuẩn thư mục Kindle /mnt/us/extensions/gach
 cd "$ROOT_DIR/dist"
-zip -r "$OUTPUT_ZIP" extensions/
+zip -r "$OUTPUT_ZIP" gach/
 cd "$ROOT_DIR"
 rm -rf "$ROOT_DIR/dist"
 
