@@ -141,7 +141,8 @@ void CairoRenderer::draw_top_bar(cairo_t* cr) {
     cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr, 24.0);
 
-    std::string page_info = "—  Trang " + std::to_string(m_current_beat->page_number()) + " / 3  —";
+    std::string page_info = "—  Trang " + std::to_string(m_current_beat->page_number()) +
+                            " / " + std::to_string(m_current_beat->total_pages()) + "  —";
     cairo_text_extents_t ext;
     cairo_text_extents(cr, page_info.c_str(), &ext);
 

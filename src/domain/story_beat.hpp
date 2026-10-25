@@ -34,7 +34,9 @@ struct ChoiceItem {
 class StoryBeat {
 public:
     StoryBeat() = default;
+
     StoryBeat(uint32_t page_num,
+              uint32_t total_pages,
               std::string lead_text,
               std::string initial_img,
               std::string transform_img,
@@ -43,6 +45,7 @@ public:
               const std::array<ChoiceItem, 4>& choices,
               uint8_t choice_count)
         : m_page_number(page_num),
+          m_total_pages(total_pages > 0 ? total_pages : page_num),
           m_lead_text(std::move(lead_text)),
           m_initial_image_path(std::move(initial_img)),
           m_transform_image_path(std::move(transform_img)),
@@ -51,7 +54,20 @@ public:
           m_choices(choices),
           m_choice_count(choice_count) {}
 
+    // Constructor tương thích ngược (8 tham số)
+    StoryBeat(uint32_t page_num,
+              std::string lead_text,
+              std::string initial_img,
+              std::string transform_img,
+              PhonicsSyllable syllable,
+              MissingPart missing_part,
+              const std::array<ChoiceItem, 4>& choices,
+              uint8_t choice_count)
+        : StoryBeat(page_num, page_num, std::move(lead_text), std::move(initial_img), std::move(transform_img),
+                    syllable, missing_part, choices, choice_count) {}
+
     [[nodiscard]] uint32_t page_number() const noexcept { return m_page_number; }
+    [[nodiscard]] uint32_t total_pages() const noexcept { return m_total_pages; }
     [[nodiscard]] const std::string& lead_text() const noexcept { return m_lead_text; }
     [[nodiscard]] const std::string& initial_image_path() const noexcept { return m_initial_image_path; }
     [[nodiscard]] const std::string& transform_image_path() const noexcept { return m_transform_image_path; }
@@ -62,6 +78,7 @@ public:
 
 private:
     uint32_t m_page_number{1};
+    uint32_t m_total_pages{1};
     std::string m_lead_text{};
     std::string m_initial_image_path{};
     std::string m_transform_image_path{};

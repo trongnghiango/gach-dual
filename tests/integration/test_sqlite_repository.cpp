@@ -87,9 +87,43 @@ void test_sqlite_repository_flow() {
     std::cout << "  ✓ test_sqlite_repository_flow passed" << std::endl;
 }
 
+void test_16_page_story_loading() {
+    SqliteStoryRepository repo(":memory:");
+    assert(repo.initialize() == true);
+    assert(repo.execute_sql(read_file("data/schema.sql")) == true);
+    assert(repo.execute_sql(read_file("data/seed_story_mit_16pages.sql")) == true);
+
+    assert(repo.load_story("mit_ngay_tu_te") == true);
+    assert(repo.total_pages() == 16);
+    assert(repo.story_title() == "Một ngày tử tế của bé Mít");
+
+    // Duyệt qua toàn bộ 16 trang
+    for (uint32_t p = 1; p <= 16; ++p) {
+        auto beat = repo.get_beat(p);
+        assert(beat.has_value());
+        assert(beat->page_number() == p);
+        assert(beat->total_pages() == 16);
+        assert(!beat->lead_text().empty());
+        assert(!beat->syllable().full_word().empty());
+        assert(beat->choice_count() >= 3);
+
+        int correct_count = 0;
+        for (uint8_t c = 0; c < beat->choice_count(); ++c) {
+            if (beat->choices()[c].is_correct) correct_count++;
+        }
+        assert(correct_count == 1 && "Each page must have exactly 1 correct choice");
+    }
+
+    assert(!repo.get_beat(0).has_value());
+    assert(!repo.get_beat(17).has_value());
+
+    std::cout << "  ✓ test_16_page_story_loading passed (all 16 pages verified)" << std::endl;
+}
+
 int main() {
     std::cout << "--- Running SQLite Repository Integration Tests ---" << std::endl;
     test_sqlite_repository_flow();
+    test_16_page_story_loading();
     std::cout << "All SQLite Repository Integration Tests passed!" << std::endl;
     return 0;
 }

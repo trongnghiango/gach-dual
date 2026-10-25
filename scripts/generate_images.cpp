@@ -12,239 +12,199 @@ void draw_rounded_rect(cairo_t* cr, double x, double y, double w, double h, doub
     cairo_close_path(cr);
 }
 
-void draw_scene_art(const std::string& filename, int page, bool is_bloom) {
+void draw_ehon_illustration(const std::string& filename, int page, bool is_bloom) {
     const int W = 1072;
-    const int H = 720; // Khung tranh 1072x720 vừa khít tỷ lệ vàng E-Ink
+    const int H = 720;
 
     cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, W, H);
     cairo_t* cr = cairo_create(surface);
 
-    // 1. Nền trắng tinh khiết
+    // 1. Nền giấy E-Ink trắng tinh
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_paint(cr);
 
-    // 2. Viền khung tranh bo góc tinh tế
+    // 2. Viền khung tranh bo góc mềm mại
     cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
     cairo_set_line_width(cr, 4.0);
     draw_rounded_rect(cr, 16, 16, W - 32, H - 32, 20.0);
     cairo_stroke(cr);
 
-    // 3. Đường mặt đất / thảm cỏ mềm mại
+    // 3. Đường mặt đất / sàn nhà
     cairo_set_line_width(cr, 3.5);
     cairo_move_to(cr, 30, H * 0.72);
     cairo_curve_to(cr, W * 0.3, H * 0.70, W * 0.6, H * 0.74, W - 30, H * 0.72);
     cairo_stroke(cr);
 
-    // Vẽ vài cụm cỏ nhỏ ở góc
-    for (int gx : {80, 140, 220, 880, 960}) {
+    // Bụi cỏ / họa tiết sàn nhà
+    for (int gx : {90, 180, 880, 970}) {
         cairo_move_to(cr, gx, H * 0.72);
-        cairo_line_to(cr, gx - 12, H * 0.68);
+        cairo_line_to(cr, gx - 10, H * 0.68);
         cairo_move_to(cr, gx, H * 0.72);
         cairo_line_to(cr, gx + 10, H * 0.67);
         cairo_stroke(cr);
     }
 
-    if (page == 1 || page == 2) {
-        // --- VẼ BẠN MÍT VÀ BÌNH TƯỚI NƯỚC ---
-        double mx = W * 0.32;
-        double my = H * 0.58;
+    // 4. Nhân vật chính: BẠN MÍT
+    double mx = W * 0.35;
+    double my = H * 0.58;
 
-        // Đầu bạn Mít (tròn trĩnh, to rõ)
-        cairo_set_line_width(cr, 4.5);
-        cairo_arc(cr, mx, my - 130, 60, 0, 2 * M_PI);
-        cairo_stroke(cr);
+    cairo_set_line_width(cr, 4.5);
+    // Đầu Mít tròn
+    cairo_arc(cr, mx, my - 130, 60, 0, 2 * M_PI);
+    cairo_stroke(cr);
 
-        // Chỏm tóc đáng yêu
-        cairo_move_to(cr, mx - 12, my - 190);
-        cairo_line_to(cr, mx - 18, my - 225);
-        cairo_move_to(cr, mx, my - 190);
-        cairo_line_to(cr, mx, my - 230);
-        cairo_move_to(cr, mx + 12, my - 190);
-        cairo_line_to(cr, mx + 18, my - 225);
-        cairo_stroke(cr);
+    // 3 sợi tóc chỏm
+    cairo_move_to(cr, mx - 12, my - 190);
+    cairo_line_to(cr, mx - 18, my - 225);
+    cairo_move_to(cr, mx, my - 190);
+    cairo_line_to(cr, mx, my - 230);
+    cairo_move_to(cr, mx + 12, my - 190);
+    cairo_line_to(cr, mx + 18, my - 225);
+    cairo_stroke(cr);
 
-        // Mắt tròn lấp lánh & miệng cười
-        cairo_arc(cr, mx - 22, my - 135, 6, 0, 2 * M_PI);
-        cairo_arc(cr, mx + 22, my - 135, 6, 0, 2 * M_PI);
-        cairo_fill(cr);
+    // Mắt cười & Miệng cười
+    cairo_arc(cr, mx - 22, my - 135, 6, 0, 2 * M_PI);
+    cairo_arc(cr, mx + 22, my - 135, 6, 0, 2 * M_PI);
+    cairo_fill(cr);
 
-        cairo_arc(cr, mx, my - 115, 24, 0.2 * M_PI, 0.8 * M_PI);
-        cairo_stroke(cr);
+    cairo_arc(cr, mx, my - 115, 24, 0.2 * M_PI, 0.8 * M_PI);
+    cairo_stroke(cr);
 
-        // Má hồng chấm bi
-        cairo_arc(cr, mx - 38, my - 120, 3, 0, 2 * M_PI);
-        cairo_arc(cr, mx + 38, my - 120, 3, 0, 2 * M_PI);
-        cairo_fill(cr);
+    // Má hồng
+    cairo_arc(cr, mx - 38, my - 120, 3, 0, 2 * M_PI);
+    cairo_arc(cr, mx + 38, my - 120, 3, 0, 2 * M_PI);
+    cairo_fill(cr);
 
-        // Áo bạn Mít
-        cairo_move_to(cr, mx - 45, my - 70);
-        cairo_line_to(cr, mx + 45, my - 70);
-        cairo_line_to(cr, mx + 60, my + 80);
-        cairo_line_to(cr, mx - 60, my + 80);
-        cairo_close_path(cr);
-        cairo_stroke(cr);
+    // Áo bạn Mít
+    cairo_move_to(cr, mx - 45, my - 70);
+    cairo_line_to(cr, mx + 45, my - 70);
+    cairo_line_to(cr, mx + 60, my + 80);
+    cairo_line_to(cr, mx - 60, my + 80);
+    cairo_close_path(cr);
+    cairo_stroke(cr);
 
-        // Tay Mít cầm bình tưới nước
-        cairo_move_to(cr, mx + 40, my - 30);
-        cairo_line_to(cr, mx + 100, my + 10);
-        cairo_stroke(cr);
+    // 5. Nhân vật phụ / Vật phẩm theo từng trang:
+    double ox = W * 0.72;
+    double oy = H * 0.65;
 
-        // Bình tưới nước nhỏ xinh
-        double can_x = mx + 130;
-        double can_y = my + 20;
-        draw_rounded_rect(cr, can_x - 30, can_y - 25, 60, 50, 8);
-        cairo_stroke(cr);
-        // Quai bình
-        cairo_arc(cr, can_x - 25, can_y, 18, -M_PI/2, M_PI/2);
-        cairo_stroke(cr);
-        // Vòi tưới nước nghiêng xuống khóm hoa
-        cairo_move_to(cr, can_x + 30, can_y - 10);
-        cairo_line_to(cr, can_x + 80, can_y + 35);
-        cairo_stroke(cr);
+    switch (page) {
+        case 1: // Chào ông bà
+        case 10: // Hái lá biếu bà
+        case 14: // Dâng nước mời ông
+        {
+            // Nhân vật Ông / Bà hiền hậu
+            cairo_arc(cr, ox, oy - 120, 55, 0, 2 * M_PI);
+            cairo_stroke(cr);
+            // Búi tóc bà hoặc nón ông
+            cairo_arc(cr, ox - 50, oy - 130, 22, 0, 2 * M_PI);
+            cairo_stroke(cr);
+            // Mắt cười phúc hậu
+            cairo_arc(cr, ox - 16, oy - 125, 12, 0.1 * M_PI, 0.9 * M_PI);
+            cairo_arc(cr, ox + 16, oy - 125, 12, 0.1 * M_PI, 0.9 * M_PI);
+            cairo_stroke(cr);
+            // Thân áo
+            cairo_move_to(cr, ox - 50, oy - 65);
+            cairo_line_to(cr, ox + 50, oy - 65);
+            cairo_line_to(cr, ox + 65, oy + 75);
+            cairo_line_to(cr, ox - 65, oy + 75);
+            cairo_close_path(cr);
+            cairo_stroke(cr);
+            break;
+        }
 
-        // --- KHÓM HOA CỦA BÀ ---
-        double px = W * 0.74;
-        double py = H * 0.72;
+        case 3: // Cho mèo ăn cơm
+        {
+            // Chú mèo con
+            cairo_arc(cr, ox, oy + 20, 35, 0, 2 * M_PI);
+            cairo_stroke(cr);
+            // Tai mèo
+            cairo_move_to(cr, ox - 25, oy - 5);
+            cairo_line_to(cr, ox - 35, oy - 35);
+            cairo_line_to(cr, ox - 10, oy - 15);
+            cairo_stroke(cr);
+            cairo_move_to(cr, ox + 25, oy - 5);
+            cairo_line_to(cr, ox + 35, oy - 35);
+            cairo_line_to(cr, ox + 10, oy - 15);
+            cairo_stroke(cr);
+            // Mắt mèo
+            cairo_arc(cr, ox - 12, oy + 15, 4, 0, 2 * M_PI);
+            cairo_arc(cr, ox + 12, oy + 15, 4, 0, 2 * M_PI);
+            cairo_fill(cr);
+            // Bát cơm
+            cairo_arc(cr, ox - 50, oy + 45, 20, 0, M_PI);
+            cairo_stroke(cr);
+            break;
+        }
 
-        // Chậu hoa gốm mộc mạc
-        cairo_move_to(cr, px - 75, py);
-        cairo_line_to(cr, px + 75, py);
-        cairo_line_to(cr, px + 55, py + 75);
-        cairo_line_to(cr, px - 55, py + 75);
-        cairo_close_path(cr);
-        cairo_stroke(cr);
-        // Vân viền chậu
-        cairo_move_to(cr, px - 70, py + 20);
-        cairo_line_to(cr, px + 70, py + 20);
-        cairo_stroke(cr);
+        case 5: // Tưới hoa
+        case 13: // Chăm sóc búp mầm
+        default:
+        {
+            // Chậu hoa / Cây cảnh
+            cairo_move_to(cr, ox - 60, oy + 40);
+            cairo_line_to(cr, ox + 60, oy + 40);
+            cairo_line_to(cr, ox + 45, oy + 95);
+            cairo_line_to(cr, ox - 45, oy + 95);
+            cairo_close_path(cr);
+            cairo_stroke(cr);
 
-        // Thân cành hoa
-        cairo_move_to(cr, px, py);
-        cairo_curve_to(cr, px - 15, py - 90, px + 15, py - 160, px, py - 230);
-        cairo_stroke(cr);
+            // Thân cây
+            cairo_move_to(cr, ox, oy + 40);
+            cairo_curve_to(cr, ox - 15, oy - 60, ox + 15, oy - 120, ox, oy - 180);
+            cairo_stroke(cr);
 
-        if (is_bloom) {
-            // Giọt nước lấp lánh từ vòi tưới
-            for (int i = 0; i < 4; ++i) {
-                cairo_arc(cr, can_x + 85 + i * 25, can_y + 45 + i * 20, 5, 0, 2 * M_PI);
+            if (is_bloom) {
+                // Bông hoa nở to rực rỡ
+                for (int i = 0; i < 6; ++i) {
+                    double a = i * (M_PI / 3.0);
+                    cairo_arc(cr, ox + 45 * std::cos(a), (oy - 180) + 45 * std::sin(a), 24, 0, 2 * M_PI);
+                    cairo_stroke(cr);
+                }
+                cairo_arc(cr, ox, oy - 180, 20, 0, 2 * M_PI);
                 cairo_fill(cr);
-            }
-
-            // Hoa nở bừng rực rỡ (6 cánh hoa to tròn)
-            for (int i = 0; i < 6; ++i) {
-                double a = i * (M_PI / 3.0);
-                double fx = px + 55 * std::cos(a);
-                double fy = (py - 230) + 55 * std::sin(a);
-                cairo_arc(cr, fx, fy, 28, 0, 2 * M_PI);
+            } else {
+                // Búp nụ hoặc cành khô
+                cairo_arc(cr, ox, oy - 180, 18, 0, M_PI);
                 cairo_stroke(cr);
             }
-            cairo_arc(cr, px, py - 230, 24, 0, 2 * M_PI);
-            cairo_fill(cr);
+            break;
+        }
+    }
 
-            // Lá xanh xòe rộng
-            cairo_arc(cr, px - 45, py - 140, 30, 0, M_PI);
-            cairo_stroke(cr);
-            cairo_arc(cr, px + 45, py - 100, 30, 0, M_PI);
-            cairo_stroke(cr);
-
-            // Mặt trời mùa hè ấm áp ở góc trời
-            cairo_arc(cr, 120, 110, 45, 0, 2 * M_PI);
-            cairo_stroke(cr);
-            for (int i = 0; i < 8; ++i) {
-                double a = i * (M_PI / 4.0);
-                cairo_move_to(cr, 120 + 55 * std::cos(a), 110 + 55 * std::sin(a));
-                cairo_line_to(cr, 120 + 75 * std::cos(a), 110 + 75 * std::sin(a));
-                cairo_stroke(cr);
-            }
-        } else {
-            // Cành lá rũ xuống héo khô khát nước
-            cairo_move_to(cr, px, py - 140);
-            cairo_curve_to(cr, px - 40, py - 130, px - 50, py - 90, px - 45, py - 70);
-            cairo_stroke(cr);
-
-            cairo_move_to(cr, px, py - 180);
-            cairo_curve_to(cr, px + 40, py - 170, px + 50, py - 130, px + 45, py - 110);
-            cairo_stroke(cr);
-
-            // Bông nụ gục đầu
-            cairo_arc(cr, px, py - 220, 20, 0, M_PI);
+    if (is_bloom) {
+        // Mặt trời mỉm cười ấm áp góc trời
+        cairo_arc(cr, 110, 100, 40, 0, 2 * M_PI);
+        cairo_stroke(cr);
+        for (int i = 0; i < 8; ++i) {
+            double a = i * (M_PI / 4.0);
+            cairo_move_to(cr, 110 + 48 * std::cos(a), 100 + 48 * std::sin(a));
+            cairo_line_to(cr, 110 + 65 * std::cos(a), 100 + 65 * std::sin(a));
             cairo_stroke(cr);
         }
-    } else {
-        // --- TRANG 3: BÀ VÀ BẠN MÍT ---
-        // Bà đứng hiền từ bên cạnh Mít
-        double bx = W * 0.40;
-        double by = H * 0.52;
-        // Đầu bà với búi tóc
-        cairo_set_line_width(cr, 4.5);
-        cairo_arc(cr, bx, by - 120, 55, 0, 2 * M_PI);
-        cairo_stroke(cr);
-        // Búi tóc bà
-        cairo_arc(cr, bx - 55, by - 130, 25, 0, 2 * M_PI);
-        cairo_stroke(cr);
-        // Mắt cười phúc hậu
-        cairo_arc(cr, bx - 15, by - 125, 12, 0.1 * M_PI, 0.9 * M_PI);
-        cairo_stroke(cr);
-        cairo_arc(cr, bx + 15, by - 125, 12, 0.1 * M_PI, 0.9 * M_PI);
-        cairo_stroke(cr);
-        cairo_arc(cr, bx, by - 100, 18, 0.2 * M_PI, 0.8 * M_PI);
-        cairo_stroke(cr);
 
-        // Áo bà
-        cairo_move_to(cr, bx - 50, by - 65);
-        cairo_line_to(cr, bx + 50, by - 65);
-        cairo_line_to(cr, bx + 70, by + 120);
-        cairo_line_to(cr, bx - 70, by + 120);
-        cairo_close_path(cr);
-        cairo_stroke(cr);
-
-        // Bạn Mít bên cạnh bà
-        double mx = W * 0.65;
-        double my = H * 0.62;
-        cairo_arc(cr, mx, my - 100, 48, 0, 2 * M_PI);
-        cairo_stroke(cr);
-        cairo_arc(cr, mx - 16, my - 105, 5, 0, 2 * M_PI);
-        cairo_arc(cr, mx + 16, my - 105, 5, 0, 2 * M_PI);
+        // Trái tim yêu thương nhỏ bay lên ở giữa
+        double hx = W * 0.52;
+        double hy = H * 0.28;
+        cairo_move_to(cr, hx, hy);
+        cairo_curve_to(cr, hx - 25, hy - 40, hx - 45, hy - 10, hx, hy + 35);
+        cairo_curve_to(cr, hx + 45, hy - 10, hx + 25, hy - 40, hx, hy);
         cairo_fill(cr);
-        cairo_arc(cr, mx, my - 88, 18, 0.2 * M_PI, 0.8 * M_PI);
-        cairo_stroke(cr);
-
-        cairo_move_to(cr, mx - 38, my - 52);
-        cairo_line_to(cr, mx + 38, my - 52);
-        cairo_line_to(cr, mx + 50, my + 70);
-        cairo_line_to(cr, mx - 50, my + 70);
-        cairo_close_path(cr);
-        cairo_stroke(cr);
-
-        if (is_bloom) {
-            // Tay bà xoa đầu Mít yêu thương
-            cairo_move_to(cr, bx + 45, by - 20);
-            cairo_curve_to(cr, bx + 80, by - 70, mx - 30, my - 160, mx, my - 148);
-            cairo_stroke(cr);
-
-            // Trái tim yêu thương nhỏ bay lên
-            cairo_move_to(cr, W * 0.52, H * 0.28);
-            cairo_curve_to(cr, W * 0.50, H * 0.23, W * 0.46, H * 0.25, W * 0.52, H * 0.33);
-            cairo_curve_to(cr, W * 0.58, H * 0.25, W * 0.54, H * 0.23, W * 0.52, H * 0.28);
-            cairo_fill(cr);
-        }
     }
 
     cairo_destroy(cr);
     cairo_surface_write_to_png(surface, filename.c_str());
     cairo_surface_destroy(surface);
-    std::cout << "Rendered artwork: " << filename << std::endl;
 }
 
 int main() {
-    draw_scene_art("assets/images/page1_dry.png", 1, false);
-    draw_scene_art("assets/images/page1_bloom.png", 1, true);
+    std::cout << "Generating 32 Ehon illustration assets for 16-page story..." << std::endl;
+    for (int p = 1; p <= 16; ++p) {
+        std::string dry_name = "assets/images/page" + std::to_string(p) + "_dry.png";
+        std::string bloom_name = "assets/images/page" + std::to_string(p) + "_bloom.png";
 
-    draw_scene_art("assets/images/page2_leaves.png", 2, false);
-    draw_scene_art("assets/images/page2_green.png", 2, true);
-
-    draw_scene_art("assets/images/page3_grandma.png", 3, false);
-    draw_scene_art("assets/images/page3_hug.png", 3, true);
-
+        draw_ehon_illustration(dry_name, p, false);
+        draw_ehon_illustration(bloom_name, p, true);
+    }
+    std::cout << "All 32 illustrations generated successfully!" << std::endl;
     return 0;
 }

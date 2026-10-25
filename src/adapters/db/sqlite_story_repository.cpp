@@ -151,6 +151,7 @@ std::optional<domain::StoryBeat> SqliteStoryRepository::get_beat(uint32_t page_n
 
     return domain::StoryBeat(
         page_number,
+        m_total_pages,
         std::move(lead_text),
         std::move(init_img),
         std::move(trans_img),

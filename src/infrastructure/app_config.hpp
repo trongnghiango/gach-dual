@@ -6,7 +6,7 @@ namespace gach::infrastructure {
 
 struct AppConfig {
     std::string db_path{"story_engine.db"};
-    std::string story_id{"mit_tuoi_cay"};
+    std::string story_id{"mit_ngay_tu_te"};
     int width{1072};
     int height{1448};
     bool is_kindle{false};

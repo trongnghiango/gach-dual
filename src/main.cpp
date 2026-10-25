@@ -41,9 +41,11 @@ int main(int argc, char** argv) {
         std::cout << "[INFO] Database empty or story not found. Seeding initial story..." << std::endl;
         std::string schema = read_text_file("data/schema.sql");
         std::string seed = read_text_file("data/seed_story_mit.sql");
-        if (!schema.empty() && !seed.empty()) {
+        std::string seed16 = read_text_file("data/seed_story_mit_16pages.sql");
+        if (!schema.empty()) {
             repo.execute_sql(schema);
-            repo.execute_sql(seed);
+            if (!seed.empty()) repo.execute_sql(seed);
+            if (!seed16.empty()) repo.execute_sql(seed16);
         }
     }
 

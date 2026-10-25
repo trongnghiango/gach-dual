@@ -121,9 +121,65 @@ void test_full_story_flow_e2e() {
     std::cout << "  ✓ test_full_story_flow_e2e passed with " << renderer.render_calls << " total renders" << std::endl;
 }
 
+void test_16_page_story_flow_e2e() {
+    adapters::db::SqliteStoryRepository repo(":memory:");
+    assert(repo.initialize() == true);
+    assert(repo.execute_sql(read_file_e2e("data/schema.sql")));
+    assert(repo.execute_sql(read_file_e2e("data/seed_story_mit_16pages.sql")));
+
+    SpyDisplayRenderer renderer;
+    application::StoryInteractor interactor(repo, renderer);
+
+    assert(interactor.start_story("mit_ngay_tu_te") == true);
+    assert(interactor.current_page() == 1);
+    assert(repo.total_pages() == 16);
+
+    for (uint32_t page = 1; page <= 16; ++page) {
+        assert(interactor.current_page() == page);
+        assert(interactor.fsm().state() == BeatState::OBSERVE);
+
+        // 1. Nhịp 1: Hết 2.5s quan sát
+        interactor.on_timer_tick(2500);
+        assert(interactor.fsm().state() == BeatState::AWAIT_INPUT);
+
+        // 2. Nhịp 2: Tìm lựa chọn đúng và chạm
+        auto beat = interactor.current_beat();
+        assert(beat.has_value());
+        int correct_idx = -1;
+        for (uint8_t c = 0; c < beat->choice_count(); ++c) {
+            if (beat->choices()[c].is_correct) {
+                correct_idx = c;
+                break;
+            }
+        }
+        assert(correct_idx >= 0);
+        auto c_rect = interactor.layout().choice_rect(correct_idx);
+        interactor.on_touch(c_rect.x + 10, c_rect.y + 10);
+        assert(interactor.fsm().state() == BeatState::TRANSFORM);
+
+        // 3. Nhịp 3: Hết 2.0s khoảng lặng chuyển hóa quả ngọt
+        interactor.on_timer_tick(2000);
+        assert(interactor.fsm().state() == BeatState::COMPLETED);
+
+        // 4. Nhịp 4: Chạm nút Next chuyển sang trang tiếp theo (trừ trang cuối cùng)
+        if (page < 16) {
+            auto next_rect = interactor.layout().next_button_rect();
+            interactor.on_touch(next_rect.x + 10, next_rect.y + 10);
+            assert(interactor.current_page() == page + 1);
+        } else {
+            // Trang 16: Không thể advance tiếp
+            assert(interactor.advance_page() == false);
+            assert(interactor.current_page() == 16);
+        }
+    }
+
+    std::cout << "  ✓ test_16_page_story_flow_e2e passed (successfully completed all 16 pages!)" << std::endl;
+}
+
 int main() {
     std::cout << "--- Running End-to-End Story Flow Tests ---" << std::endl;
     test_full_story_flow_e2e();
+    test_16_page_story_flow_e2e();
     std::cout << "All E2E Tests passed!" << std::endl;
     return 0;
 }
