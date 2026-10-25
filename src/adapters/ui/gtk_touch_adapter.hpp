@@ -1,0 +1,34 @@
+#pragma once
+
+#include <gtk/gtk.h>
+#include "application/story_interactor.hpp"
+#include "adapters/ui/cairo_renderer.hpp"
+
+namespace gach::adapters::ui {
+
+class GtkTouchAdapter {
+public:
+    GtkTouchAdapter(application::StoryInteractor& interactor, CairoRenderer& renderer);
+    ~GtkTouchAdapter() = default;
+
+    void initialize(int argc, char** argv, int width, int height);
+    void run();
+
+private:
+#if GTK_CHECK_VERSION(3, 0, 0)
+    static gboolean on_draw_event(GtkWidget* widget, cairo_t* cr, gpointer user_data);
+#else
+    static gboolean on_expose_event(GtkWidget* widget, GdkEventExpose* event, gpointer user_data);
+#endif
+    static gboolean on_button_press_event(GtkWidget* widget, GdkEventButton* event, gpointer user_data);
+    static gboolean on_timer_tick_event(gpointer user_data);
+
+    application::StoryInteractor& m_interactor;
+    CairoRenderer& m_renderer;
+    GtkWidget* m_window{nullptr};
+    GtkWidget* m_drawing_area{nullptr};
+    guint m_timer_id{0};
+    guint32 m_last_click_time{0};
+};
+
+} // namespace gach::adapters::ui
