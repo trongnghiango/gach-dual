@@ -193,7 +193,7 @@ fi
 # 7. Đóng gói hoặc tải bản phát hành ARMv7 chuẩn cho Kindle
 echo -e "${CYAN}[5/6] Chuẩn bị gói cài đặt GACH mới nhất cho Kindle...${NC}"
 cd "$SCRIPT_DIR"
-RELEASE_URL="https://github.com/trongnghiango/gach-kindle/releases/download/latest/gach-kual.zip"
+RELEASE_URL="https://github.com/trongnghiango/gach-dual/releases/download/latest/gach-kual.zip"
 
 IS_ARM=0
 if [ -f "bin/gach" ]; then
