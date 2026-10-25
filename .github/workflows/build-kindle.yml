@@ -34,7 +34,8 @@ jobs:
             build-essential autoconf automake bison flex gawk \
             libtool libtool-bin libncurses-dev curl file git gperf \
             help2man texinfo unzip wget sed libarchive-dev nettle-dev \
-            meson ninja-build pkg-config zip python3 make binutils patchelf libsqlite3-dev
+            meson ninja-build pkg-config zip python3 make binutils patchelf \
+            sqlite3 libsqlite3-dev libcairo2-dev
 
       - name: Download prebuilt Kindle toolchain
         run: |
@@ -127,9 +128,11 @@ jobs:
           sqlite3 story_engine.db < data/schema.sql
           sqlite3 story_engine.db < data/seed_story_mit.sql
 
-          # Compile generator on Ubuntu runner and generate 1-channel Grayscale PNGs
-          g++ -std=c++17 -O2 scripts/generate_images.cpp $(pkg-config --cflags --libs cairo) -o /tmp/gen_img
-          /tmp/gen_img
+          # Sinh lại ảnh nếu chưa có sẵn
+          if [ ! -f "assets/images/page1_bloom.png" ]; then
+            g++ -std=c++17 -O2 scripts/generate_images.cpp $(pkg-config --cflags --libs cairo) -o /tmp/gen_img
+            /tmp/gen_img
+          fi
           ls -lh assets/images/
 
       - name: Package KUAL extension
