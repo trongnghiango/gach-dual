@@ -62,7 +62,9 @@ jobs:
           ./gen-sdk.sh "$TARGET"
 
           echo "Patching legacy Amazon GTK 2.0 headers in sysroot..."
-          find "$HOME/x-tools" -name 'gtkstatusicon.h' -exec sed -i 's/void (*__gtk_reserved[1-4]);/void (*__gtk_reserved\1)(void);/g' {} + || true
+          find "$HOME/x-tools" -name 'gtkstatusicon.h' -exec sed -i 's/__gtk_reserved\([1-4]\));/__gtk_reserved\1)(void);/g' {} +
+          echo "Verifying patched gtkstatusicon.h:"
+          find "$HOME/x-tools" -name 'gtkstatusicon.h' -exec grep -H '__gtk_reserved' {} +
 
       - name: Locate Kindle cross file and tools
         run: |
@@ -92,7 +94,7 @@ jobs:
           rm -rf builddir_kindlehf
 
           meson setup --cross-file "$CROSS_FILE" -Dgtk_version=gtk+-2.0 builddir_kindlehf
-          meson compile -C builddir_kindlehf
+          meson compile -v -C builddir_kindlehf
 
           if [ -n "${KINDLE_STRIP:-}" ] && [ -x "$KINDLE_STRIP" ]; then
             "$KINDLE_STRIP" builddir_kindlehf/gach || true
