@@ -267,25 +267,25 @@ void CairoRenderer::draw_story_text(cairo_t* cr, const std::string& text, const 
 void CairoRenderer::draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat, const domain::FlowFSM& fsm, const Rect& rect) {
     cairo_save(cr);
 
-    // 1. Vẽ thẻ nền bo góc (Card container)
-    cairo_set_source_rgb(cr, 0.95, 0.95, 0.95);
-    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 16.0);
+    // 1. Khay gỗ Montessori (Phonics Tray Container)
+    cairo_set_source_rgb(cr, 0.94, 0.94, 0.94);
+    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 18.0);
     cairo_fill(cr);
 
-    cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
-    cairo_set_line_width(cr, 2.5);
-    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 16.0);
+    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
+    cairo_set_line_width(cr, 3.0);
+    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 18.0);
     cairo_stroke(cr);
 
-    // 2. Nội dung thẻ
+    // 2. Nội dung khay ghép chữ
     cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
 
     if (fsm.state() == domain::BeatState::TRANSFORM || fsm.state() == domain::BeatState::COMPLETED) {
-        // Trạng thái đã ghép đúng / hoàn thành: Chữ to nổi bật, đậm đà
+        // Trạng thái đã ghép đúng: Huy hiệu từ hoàn chỉnh rực rỡ
         cairo_set_font_size(cr, 56.0);
         cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
-        std::string text = "Từ hoàn chỉnh:   " + std::string(beat.syllable().full_word());
+        std::string text = "Tu hoan chinh:   " + std::string(beat.syllable().full_word());
         cairo_text_extents_t ext;
         cairo_text_extents(cr, text.c_str(), &ext);
 
@@ -294,15 +294,15 @@ void CairoRenderer::draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat
         cairo_move_to(cr, tx, ty);
         cairo_show_text(cr, text.c_str());
     } else {
-        // Trạng thái chờ ghép: Hiển thị công thức trực quan to rõ
-        cairo_set_font_size(cr, 50.0);
+        // Trạng thái chờ ghép: Rãnh lắp ghép Montessori trực quan (Dashed puzzle slot)
+        cairo_set_font_size(cr, 52.0);
         cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
         std::string label;
         if (beat.missing_part() == domain::MissingPart::ONSET) {
-            label = "Ghép chữ:   [ ? ]  +  " + std::string(beat.syllable().rhyme());
+            label = "Ghep chu:   [ ? ]  +  " + std::string(beat.syllable().rhyme());
         } else {
-            label = "Ghép chữ:   " + std::string(beat.syllable().onset()) + "  +  [ ? ]";
+            label = "Ghep chu:   " + std::string(beat.syllable().onset()) + "  +  [ ? ]";
         }
 
         cairo_text_extents_t ext;
@@ -324,14 +324,17 @@ void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, con
 
         cairo_save(cr);
 
-        // Nền thẻ lựa chọn
+        // 1. Đổ bóng mực E-Ink tạo hiệu ứng khối gỗ xúc giác (Tactile 3D Block)
+        cairo_set_source_rgb(cr, 0.22, 0.22, 0.22);
+        draw_rounded_rect(cr, r.x + 5, r.y + 6, r.width, r.height, 22.0);
+        cairo_fill(cr);
+
+        // 2. Thân khối gỗ lựa chọn
         if (fsm.hint_visible() && is_correct) {
-            // Hướng dẫn dẫn lối: Nền xám đậm hơn một chút
             cairo_set_source_rgb(cr, 0.88, 0.88, 0.88);
             draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 22.0);
             cairo_fill(cr);
 
-            // Viền đậm nổi bật
             cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
             cairo_set_line_width(cr, 6.0);
             draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 22.0);
@@ -341,16 +344,16 @@ void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, con
             draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 22.0);
             cairo_fill(cr);
 
-            cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
+            cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
             cairo_set_line_width(cr, 4.0);
             draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 22.0);
             cairo_stroke(cr);
         }
 
-        // Chữ cái to rõ nét (Font 78px bold sans-serif) cho trẻ dễ nhìn, không râu ria
+        // 3. Chữ cái to tròn dứt khoát (Font 80px bold sans-serif)
         cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
         cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 78.0);
+        cairo_set_font_size(cr, 80.0);
 
         std::string_view text = beat.choices()[i].display_text();
         cairo_text_extents_t ext;
@@ -368,21 +371,25 @@ void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, con
 void CairoRenderer::draw_next_button(cairo_t* cr, const Rect& rect) {
     cairo_save(cr);
 
-    // Nút dạng thanh Pill bo tròn nằm ở đáy
+    // 1. Đổ bóng mực
+    cairo_set_source_rgb(cr, 0.22, 0.22, 0.22);
+    draw_rounded_rect(cr, rect.x + 5, rect.y + 6, rect.width, rect.height, rect.height / 2.0);
+    cairo_fill(cr);
+
+    // 2. Thân nút Pill
+    cairo_set_source_rgb(cr, 0.96, 0.96, 0.96);
+    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, rect.height / 2.0);
+    cairo_fill(cr);
+
     cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
     cairo_set_line_width(cr, 4.0);
     draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, rect.height / 2.0);
     cairo_stroke(cr);
 
-    // Nền trắng bên trong nút
-    cairo_set_source_rgb(cr, 0.95, 0.95, 0.95);
-    draw_rounded_rect(cr, rect.x + 3, rect.y + 3, rect.width - 6, rect.height - 6, (rect.height - 6) / 2.0);
-    cairo_fill(cr);
-
-    // Chữ chỉ dẫn chuyển trang
+    // 3. Chữ chỉ dẫn chuyển trang
     cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
     cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 36.0);
+    cairo_set_font_size(cr, 38.0);
 
     std::string text = "Tiếp tục sang trang   ->";
     cairo_text_extents_t ext;
