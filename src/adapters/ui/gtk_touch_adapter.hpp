@@ -37,6 +37,12 @@ private:
     GtkWidget* m_drawing_area{nullptr};
     guint m_timer_id{0};
     guint32 m_last_click_time{0};
+
+    int m_virtual_w{1072};
+    int m_virtual_h{1448};
+    double m_scale{1.0};
+    double m_offset_x{0.0};
+    double m_offset_y{0.0};
 };
 
 } // namespace gach::adapters::ui

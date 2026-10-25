@@ -71,6 +71,32 @@ void CairoRenderer::draw_to_context(cairo_t* cr) {
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_paint(cr);
 
+    // 1.1. Khung căn chỉnh sát mép viền vật lý màn hình (Physical Screen Boundary)
+    // Giúp xác định chính xác mép màn hình và phát hiện thanh trạng thái Kindle OS đẩy xuống
+    cairo_save(cr);
+    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
+    cairo_set_line_width(cr, 3.0);
+    cairo_rectangle(cr, 2.0, 2.0, m_width - 4.0, m_height - 4.0);
+    cairo_stroke(cr);
+
+    // Vạch căn góc (Corner Alignment Marks) tại 4 góc mép
+    double mark_len = 35.0;
+    cairo_set_line_width(cr, 4.0);
+    // Góc trên - trái (0, 0)
+    cairo_move_to(cr, 2, 16); cairo_line_to(cr, mark_len, 16);
+    cairo_move_to(cr, 16, 2); cairo_line_to(cr, 16, mark_len);
+    // Góc trên - phải (W, 0)
+    cairo_move_to(cr, m_width - mark_len, 16); cairo_line_to(cr, m_width - 2, 16);
+    cairo_move_to(cr, m_width - 16, 2); cairo_line_to(cr, m_width - 16, mark_len);
+    // Góc dưới - trái (0, H)
+    cairo_move_to(cr, 2, m_height - 16); cairo_line_to(cr, mark_len, m_height - 16);
+    cairo_move_to(cr, 16, m_height - mark_len); cairo_line_to(cr, 16, m_height - 2);
+    // Góc dưới - phải (W, H)
+    cairo_move_to(cr, m_width - mark_len, m_height - 16); cairo_line_to(cr, m_width - 2, m_height - 16);
+    cairo_move_to(cr, m_width - 16, m_height - mark_len); cairo_line_to(cr, m_width - 16, m_height - 2);
+    cairo_stroke(cr);
+    cairo_restore(cr);
+
     if (!m_current_beat || !m_current_fsm) {
         cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
         cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
