@@ -45,6 +45,7 @@ sources = files(
   'src/adapters/db/sqlite_story_repository.cpp',
   'src/adapters/ui/cairo_renderer.cpp',
   'src/adapters/ui/ink_flex.cpp',
+  'src/adapters/ui/minimal_components.cpp',
   'src/adapters/ui/ui_layout.cpp',
   'src/adapters/ui/gtk_touch_adapter.cpp',
   'src/infrastructure/kindle_power.cpp',

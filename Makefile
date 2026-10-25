@@ -27,11 +27,13 @@ test_domain: directories
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(TESTS_DIR)/unit/test_phonics_syllable.cpp $(SRC_DIR)/domain/phonics_syllable.cpp -o $(BIN_DIR)/test_phonics_syllable
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(TESTS_DIR)/unit/test_flow_fsm.cpp $(SRC_DIR)/domain/flow_fsm.cpp -o $(BIN_DIR)/test_flow_fsm
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(TESTS_DIR)/unit/test_ink_flex.cpp $(SRC_DIR)/adapters/ui/ink_flex.cpp -o $(BIN_DIR)/test_ink_flex
-	@echo "=== RUNNING DOMAIN & INKFLEX UNIT TESTS ==="
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(PKG_CFLAGS) $(TESTS_DIR)/unit/test_minimal_components.cpp $(SRC_DIR)/adapters/ui/minimal_components.cpp $(PKG_LIBS) -o $(BIN_DIR)/test_minimal_components
+	@echo "=== RUNNING DOMAIN, INKFLEX & MINIMAL COMPONENTS UNIT TESTS ==="
 	@$(BIN_DIR)/test_phonics_syllable
 	@$(BIN_DIR)/test_flow_fsm
 	@$(BIN_DIR)/test_ink_flex
-	@echo "Domain & InkFlex Unit Tests: ALL PASSED!"
+	@$(BIN_DIR)/test_minimal_components
+	@echo "Domain, InkFlex & Minimal Components Unit Tests: ALL PASSED!"
 
 # --- TẦNG INTEGRATION TESTS (SQLite3 in-memory & Use Cases) ---
 test_db: directories
@@ -97,6 +99,7 @@ $(BIN_DIR)/gach: directories
 		$(SRC_DIR)/adapters/db/sqlite_story_repository.cpp \
 		$(SRC_DIR)/adapters/ui/cairo_renderer.cpp \
 		$(SRC_DIR)/adapters/ui/ink_flex.cpp \
+		$(SRC_DIR)/adapters/ui/minimal_components.cpp \
 		$(SRC_DIR)/adapters/ui/ui_layout.cpp \
 		$(SRC_DIR)/adapters/ui/gtk_touch_adapter.cpp \
 		$(SRC_DIR)/infrastructure/kindle_power.cpp \

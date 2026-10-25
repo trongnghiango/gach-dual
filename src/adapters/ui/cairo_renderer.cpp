@@ -1,4 +1,5 @@
 #include "adapters/ui/cairo_renderer.hpp"
+#include "adapters/ui/minimal_components.hpp"
 #include <cmath>
 #include <iostream>
 #include <sstream>
@@ -32,12 +33,7 @@ void CairoRenderer::request_redraw(bool full_refresh) {
 }
 
 void CairoRenderer::draw_rounded_rect(cairo_t* cr, double x, double y, double w, double h, double r) {
-    cairo_new_sub_path(cr);
-    cairo_arc(cr, x + w - r, y + r, r, -M_PI/2, 0);
-    cairo_arc(cr, x + w - r, y + h - r, r, 0, M_PI/2);
-    cairo_arc(cr, x + r, y + h - r, r, M_PI/2, M_PI);
-    cairo_arc(cr, x + r, y + r, r, M_PI, 3*M_PI/2);
-    cairo_close_path(cr);
+    MinimalComponents::draw_rounded_rect(cr, x, y, w, h, r);
 }
 
 std::vector<std::string> CairoRenderer::wrap_text_lines(cairo_t* cr, const std::string& text, double max_width) {
@@ -67,7 +63,7 @@ std::vector<std::string> CairoRenderer::wrap_text_lines(cairo_t* cr, const std::
 void CairoRenderer::draw_to_context(cairo_t* cr) {
     if (!cr) return;
 
-    // 1. Nền trắng E-Ink thuần khiết (Pure minimalism paper background)
+    // 1. Nền giấy trắng E-Ink thuần khiết (Pure minimalism paper background)
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_paint(cr);
 
@@ -80,7 +76,7 @@ void CairoRenderer::draw_to_context(cairo_t* cr) {
         return;
     }
 
-    // 2. Chỉ báo trang và nút thoát tinh gọn ở đỉnh
+    // 2. Chỉ báo trang và nút tiện ích ở đỉnh
     draw_top_bar(cr);
 
     // 3. Tranh minh họa Ehon tự nhiên hòa vào trang giấy
@@ -110,47 +106,16 @@ void CairoRenderer::draw_to_context(cairo_t* cr) {
 
 void CairoRenderer::draw_top_bar(cairo_t* cr) {
     if (!m_current_beat) return;
-    cairo_save(cr);
 
-    // Chỉ số trang thanh nhã ở chính giữa đỉnh
-    cairo_set_source_rgb(cr, 0.45, 0.45, 0.45);
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_set_font_size(cr, 22.0);
+    // 1. Chỉ số trang thanh nhã ở chính giữa đỉnh
+    MinimalComponents::draw_page_tracker(cr, m_width / 2.0, 44.0,
+                                         m_current_beat->page_number(),
+                                         m_current_beat->total_pages());
 
-    std::string page_info = std::to_string(m_current_beat->page_number()) +
-                            "  /  " + std::to_string(m_current_beat->total_pages());
-    cairo_text_extents_t ext;
-    cairo_text_extents(cr, page_info.c_str(), &ext);
-
-    double x = (m_width - ext.width) / 2.0;
-    cairo_move_to(cr, x, 44);
-    cairo_show_text(cr, page_info.c_str());
-
-    // Nút Thoát tối giản ở góc trên bên phải
+    // 2. Nút Thoát tối giản dạng Floating Utility Pill ở góc trên bên phải
     Rect er = m_layout.exit_button_rect();
-
-    // Viền pill mỏng nhẹ tinh tế
-    cairo_set_source_rgb(cr, 0.85, 0.85, 0.85);
-    cairo_set_line_width(cr, 1.5);
-    draw_rounded_rect(cr, er.x, er.y, er.width, er.height, er.height / 2.0);
-    cairo_stroke(cr);
-
-    // Chữ 'Thoát'
-    cairo_set_source_rgb(cr, 0.35, 0.35, 0.35);
-    cairo_set_font_size(cr, 19.0);
-    cairo_move_to(cr, er.x + 14, er.y + er.height - 12);
-    cairo_show_text(cr, "Thoat");
-
-    // Dấu X vector sắc nét
-    double x_cx = er.x + er.width - 20;
-    double x_cy = er.y + er.height / 2.0;
-    double xs = 6.0;
-    cairo_set_line_width(cr, 2.0);
-    cairo_move_to(cr, x_cx - xs, x_cy - xs); cairo_line_to(cr, x_cx + xs, x_cy + xs);
-    cairo_move_to(cr, x_cx + xs, x_cy - xs); cairo_line_to(cr, x_cx - xs, x_cy + xs);
-    cairo_stroke(cr);
-
-    cairo_restore(cr);
+    MinimalComponents::draw_utility_pill(cr, er.x, er.y, er.width, er.height,
+                                        "Thoat", MinimalComponents::UtilityIcon::CLOSE);
 }
 
 void CairoRenderer::draw_image(cairo_t* cr, const std::string& image_path, const Rect& rect) {
@@ -228,128 +193,12 @@ void CairoRenderer::draw_story_text(cairo_t* cr, const std::string& text, const 
 }
 
 void CairoRenderer::draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat, const domain::FlowFSM& fsm, const Rect& rect) {
-    cairo_save(cr);
+    bool completed = (fsm.state() == domain::BeatState::TRANSFORM || fsm.state() == domain::BeatState::COMPLETED);
+    bool missing_onset = (beat.missing_part() == domain::MissingPart::ONSET);
 
-    // 1. Thẻ tiêu điểm ghép vần tối giản (Phonics Focus Container)
-    cairo_set_source_rgb(cr, 0.98, 0.98, 0.98);
-    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 16.0);
-    cairo_fill(cr);
-
-    cairo_set_source_rgb(cr, 0.82, 0.82, 0.82);
-    cairo_set_line_width(cr, 1.5);
-    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, 16.0);
-    cairo_stroke(cr);
-
-    double center_y = rect.y + rect.height / 2.0;
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-
-    if (fsm.state() == domain::BeatState::TRANSFORM || fsm.state() == domain::BeatState::COMPLETED) {
-        // Trạng thái đã ghép đúng: Từ hoàn chỉnh hiển thị cực kỳ sang trọng và nổi bật
-        cairo_set_font_size(cr, 72.0);
-        cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-
-        std::string full_word = std::string(beat.syllable().full_word());
-        cairo_text_extents_t ext;
-        cairo_text_extents(cr, full_word.c_str(), &ext);
-
-        double tx = rect.x + (rect.width - ext.width) / 2.0;
-        double ty = center_y + ext.height / 2.0 - 4;
-        cairo_move_to(cr, tx, ty);
-        cairo_show_text(cr, full_word.c_str());
-    } else {
-        // Trạng thái chờ ghép: Rãnh ghép vần trực giác không rườm rà
-        double slot_w = 110.0;
-        double slot_h = 68.0;
-        double slot_r = 12.0;
-
-        cairo_set_font_size(cr, 66.0);
-        cairo_text_extents_t letter_ext;
-
-        if (beat.missing_part() == domain::MissingPart::ONSET) {
-            // Khuyết âm đầu: [ ? ] ở bên trái, vần ở bên phải
-            std::string rhyme_str = std::string(beat.syllable().rhyme());
-            cairo_text_extents(cr, rhyme_str.c_str(), &letter_ext);
-
-            double spacing = 24.0;
-            double total_w = slot_w + spacing + letter_ext.width;
-            double start_x = rect.x + (rect.width - total_w) / 2.0;
-
-            double slot_x = start_x;
-            double slot_y = center_y - slot_h / 2.0;
-
-            // Nền trắng bên trong slot
-            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-            draw_rounded_rect(cr, slot_x, slot_y, slot_w, slot_h, slot_r);
-            cairo_fill(cr);
-
-            // Viền nét đứt tinh tế
-            const double dashes[] = {6.0, 4.0};
-            cairo_set_dash(cr, dashes, 2, 0);
-            cairo_set_source_rgb(cr, 0.4, 0.4, 0.4);
-            cairo_set_line_width(cr, 2.0);
-            draw_rounded_rect(cr, slot_x, slot_y, slot_w, slot_h, slot_r);
-            cairo_stroke(cr);
-            cairo_set_dash(cr, nullptr, 0, 0);
-
-            // Dấu hỏi '?' xám nhạt
-            cairo_set_source_rgb(cr, 0.55, 0.55, 0.55);
-            cairo_set_font_size(cr, 42.0);
-            cairo_text_extents_t q_ext;
-            cairo_text_extents(cr, "?", &q_ext);
-            cairo_move_to(cr, slot_x + (slot_w - q_ext.width) / 2.0, slot_y + (slot_h + q_ext.height) / 2.0 - 2);
-            cairo_show_text(cr, "?");
-
-            // Vần ở bên phải
-            cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-            cairo_set_font_size(cr, 66.0);
-            double lx = start_x + slot_w + spacing;
-            double ly = center_y + letter_ext.height / 2.0 - 4;
-            cairo_move_to(cr, lx, ly);
-            cairo_show_text(cr, rhyme_str.c_str());
-
-        } else {
-            // Khuyết vần: Âm đầu ở bên trái, [ ? ] ở bên phải
-            std::string onset_str = std::string(beat.syllable().onset());
-            cairo_text_extents(cr, onset_str.c_str(), &letter_ext);
-
-            double spacing = 24.0;
-            double total_w = letter_ext.width + spacing + slot_w;
-            double start_x = rect.x + (rect.width - total_w) / 2.0;
-
-            // Âm đầu ở bên trái
-            cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-            cairo_set_font_size(cr, 66.0);
-            double lx = start_x;
-            double ly = center_y + letter_ext.height / 2.0 - 4;
-            cairo_move_to(cr, lx, ly);
-            cairo_show_text(cr, onset_str.c_str());
-
-            // Slot ở bên phải
-            double slot_x = start_x + letter_ext.width + spacing;
-            double slot_y = center_y - slot_h / 2.0;
-
-            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-            draw_rounded_rect(cr, slot_x, slot_y, slot_w, slot_h, slot_r);
-            cairo_fill(cr);
-
-            const double dashes[] = {6.0, 4.0};
-            cairo_set_dash(cr, dashes, 2, 0);
-            cairo_set_source_rgb(cr, 0.4, 0.4, 0.4);
-            cairo_set_line_width(cr, 2.0);
-            draw_rounded_rect(cr, slot_x, slot_y, slot_w, slot_h, slot_r);
-            cairo_stroke(cr);
-            cairo_set_dash(cr, nullptr, 0, 0);
-
-            cairo_set_source_rgb(cr, 0.55, 0.55, 0.55);
-            cairo_set_font_size(cr, 42.0);
-            cairo_text_extents_t q_ext;
-            cairo_text_extents(cr, "?", &q_ext);
-            cairo_move_to(cr, slot_x + (slot_w - q_ext.width) / 2.0, slot_y + (slot_h + q_ext.height) / 2.0 - 2);
-            cairo_show_text(cr, "?");
-        }
-    }
-
-    cairo_restore(cr);
+    MinimalComponents::draw_phonics_slot(cr, rect.x, rect.y, rect.width, rect.height,
+                                        beat.syllable().onset(), beat.syllable().rhyme(),
+                                        missing_onset, completed, beat.syllable().full_word());
 }
 
 void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, const domain::FlowFSM& fsm) {
@@ -357,75 +206,20 @@ void CairoRenderer::draw_choices(cairo_t* cr, const domain::StoryBeat& beat, con
     for (uint8_t i = 0; i < count; ++i) {
         Rect r = m_layout.choice_rect(i);
         if (r.width <= 0 || r.height <= 0) continue;
+
         bool is_correct = beat.choices()[i].is_correct;
         bool is_hinted = fsm.hint_visible() && is_correct;
 
-        cairo_save(cr);
-
-        // Mảnh ghép chữ cái tối giản: Nền trắng tinh khiết, viền mảnh 2px, không bóng đổ
-        if (is_hinted) {
-            // High-contrast Inversion khi có gợi ý dẫn lối: Nền đen chữ trắng
-            cairo_set_source_rgb(cr, 0.05, 0.05, 0.05);
-            draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 18.0);
-            cairo_fill(cr);
-        } else {
-            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-            draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 18.0);
-            cairo_fill(cr);
-
-            cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
-            cairo_set_line_width(cr, 2.0);
-            draw_rounded_rect(cr, r.x, r.y, r.width, r.height, 18.0);
-            cairo_stroke(cr);
-        }
-
-        // Chữ cái to tròn dứt khoát ở chính giữa
-        if (is_hinted) {
-            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-        } else {
-            cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-        }
-
-        cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 82.0);
-
-        std::string_view text = beat.choices()[i].display_text();
-        cairo_text_extents_t ext;
-        cairo_text_extents(cr, std::string(text).c_str(), &ext);
-
-        double tx = r.x + (r.width - ext.width) / 2.0 - ext.x_bearing;
-        double ty = r.y + (r.height - ext.height) / 2.0 - ext.y_bearing;
-
-        cairo_move_to(cr, tx, ty);
-        cairo_show_text(cr, std::string(text).c_str());
-        cairo_restore(cr);
+        auto state = is_hinted ? MinimalComponents::ChoiceState::HINTED : MinimalComponents::ChoiceState::NORMAL;
+        MinimalComponents::draw_choice_tile(cr, r.x, r.y, r.width, r.height,
+                                            beat.choices()[i].display_text(), state);
     }
 }
 
 void CairoRenderer::draw_next_button(cairo_t* cr, const Rect& rect) {
-    cairo_save(cr);
-
-    // Nút chuyển trang tối giản: Solid black pill button (High-contrast primary CTA)
-    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-    draw_rounded_rect(cr, rect.x, rect.y, rect.width, rect.height, rect.height / 2.0);
-    cairo_fill(cr);
-
-    // Chữ trắng sắc nét, dứt khoát
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 36.0);
-
-    std::string text = "Tiếp tục sang trang  ->";
-    cairo_text_extents_t ext;
-    cairo_text_extents(cr, text.c_str(), &ext);
-
-    double tx = rect.x + (rect.width - ext.width) / 2.0;
-    double ty = rect.y + (rect.height + ext.height) / 2.0 - 4;
-
-    cairo_move_to(cr, tx, ty);
-    cairo_show_text(cr, text.c_str());
-
-    cairo_restore(cr);
+    MinimalComponents::draw_action_pill(cr, rect.x, rect.y, rect.width, rect.height,
+                                        "Tiep tuc sang trang  ->",
+                                        MinimalComponents::ButtonStyle::PRIMARY_SOLID);
 }
 
 } // namespace gach::adapters::ui
