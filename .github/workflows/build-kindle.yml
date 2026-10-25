@@ -109,16 +109,8 @@ jobs:
 
           rm -rf builddir_kindlehf
 
-          meson setup --cross-file "$CROSS_FILE" -Dgtk_version=gtk+-2.0 builddir_kindlehf || {
-            echo "=== MESON SETUP LOG ==="
-            cat builddir_kindlehf/meson-logs/meson-log.txt || true
-            exit 1
-          }
-          meson compile -v -C builddir_kindlehf || {
-            echo "=== MESON COMPILE LOG ==="
-            cat builddir_kindlehf/meson-logs/meson-log.txt || true
-            exit 1
-          }
+          meson setup --cross-file "$CROSS_FILE" -Dgtk_version=gtk+-2.0 builddir_kindlehf
+          ninja -C builddir_kindlehf
 
           if [ -n "${KINDLE_STRIP:-}" ] && [ -x "$KINDLE_STRIP" ]; then
             "$KINDLE_STRIP" builddir_kindlehf/gach || true
