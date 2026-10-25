@@ -2,7 +2,7 @@
 
 #include <cairo.h>
 #include <string>
-#include <string_view>
+#include <vector>
 #include "application/ports/display_renderer_port.hpp"
 #include "adapters/ui/ui_layout.hpp"
 
@@ -20,18 +20,21 @@ public:
     void request_redraw(bool full_refresh) override;
     void set_resolution(int width, int height) override;
 
-    // Phương thức vẽ trực tiếp lên Cairo Context được cung cấp từ GTK hoặc Offscreen Surface
     void draw_to_context(cairo_t* cr);
 
     [[nodiscard]] bool needs_full_refresh() const noexcept { return m_needs_full_refresh; }
     void clear_full_refresh_flag() noexcept { m_needs_full_refresh = false; }
 
 private:
+    void draw_top_bar(cairo_t* cr);
     void draw_image(cairo_t* cr, const std::string& image_path, const Rect& rect);
-    void draw_text(cairo_t* cr, const std::string& text, const Rect& rect);
+    void draw_story_text(cairo_t* cr, const std::string& text, const Rect& rect);
     void draw_phonics_word(cairo_t* cr, const domain::StoryBeat& beat, const domain::FlowFSM& fsm, const Rect& rect);
     void draw_choices(cairo_t* cr, const domain::StoryBeat& beat, const domain::FlowFSM& fsm);
     void draw_next_button(cairo_t* cr, const Rect& rect);
+
+    static void draw_rounded_rect(cairo_t* cr, double x, double y, double w, double h, double r);
+    static std::vector<std::string> wrap_text_lines(cairo_t* cr, const std::string& text, double max_width);
 
     UILayout& m_layout;
     const domain::StoryBeat* m_current_beat{nullptr};
