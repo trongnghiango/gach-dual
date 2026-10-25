@@ -34,7 +34,7 @@ jobs:
             build-essential autoconf automake bison flex gawk \
             libtool libtool-bin libncurses-dev curl file git gperf \
             help2man texinfo unzip wget sed libarchive-dev nettle-dev \
-            meson ninja-build pkg-config zip python3 make binutils patchelf
+            meson ninja-build pkg-config zip python3 make binutils patchelf libsqlite3-dev
 
       - name: Download prebuilt Kindle toolchain
         run: |
@@ -69,6 +69,19 @@ jobs:
           echo "Verifying patched gtkstatusicon.h:"
           find "$HOME/x-tools" -name 'gtkstatusicon.h' -exec grep -H '__gtk_reserved' {} +
 
+          echo "Injecting SQLite3 headers and library symlinks into sysroot..."
+          SYSROOT="$(find "$HOME/x-tools" -name sysroot -type d | head -n 1)"
+          if [ -d "$SYSROOT/usr/include" ]; then
+              cp /usr/include/sqlite3*.h "$SYSROOT/usr/include/"
+              echo "Copied sqlite3.h to $SYSROOT/usr/include/"
+          fi
+          # Ensure libsqlite3.so symlink exists in sysroot
+          find "$SYSROOT/usr/lib" -name 'libsqlite3.so*' || true
+          if [ ! -f "$SYSROOT/usr/lib/libsqlite3.so" ] && [ -f "$SYSROOT/usr/lib/libsqlite3.so.0" ]; then
+              ln -s libsqlite3.so.0 "$SYSROOT/usr/lib/libsqlite3.so"
+              echo "Created symlink libsqlite3.so -> libsqlite3.so.0"
+          fi
+
       - name: Locate Kindle cross file and tools
         run: |
           set -euxo pipefail
@@ -96,8 +109,16 @@ jobs:
 
           rm -rf builddir_kindlehf
 
-          meson setup --cross-file "$CROSS_FILE" -Dgtk_version=gtk+-2.0 builddir_kindlehf
-          meson compile -v -C builddir_kindlehf
+          meson setup --cross-file "$CROSS_FILE" -Dgtk_version=gtk+-2.0 builddir_kindlehf || {
+            echo "=== MESON SETUP LOG ==="
+            cat builddir_kindlehf/meson-logs/meson-log.txt || true
+            exit 1
+          }
+          meson compile -v -C builddir_kindlehf || {
+            echo "=== MESON COMPILE LOG ==="
+            cat builddir_kindlehf/meson-logs/meson-log.txt || true
+            exit 1
+          }
 
           if [ -n "${KINDLE_STRIP:-}" ] && [ -x "$KINDLE_STRIP" ]; then
             "$KINDLE_STRIP" builddir_kindlehf/gach || true
