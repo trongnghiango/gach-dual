@@ -32,6 +32,8 @@ if [ -f "$ROOT_DIR/story_engine.db" ]; then
     cp "$ROOT_DIR/story_engine.db" "$BUILD_DIR/data/"
     echo "  ✓ Đã nạp CSDL: $ROOT_DIR/story_engine.db"
 fi
+cp "$ROOT_DIR/data/"*.sql "$BUILD_DIR/data/" 2>/dev/null || true
+echo "  ✓ Đã nạp các tệp schema và seed SQL dự phòng"
 
 # 4. Sao chép Ảnh minh họa E-Ink
 if [ -d "$ROOT_DIR/assets/images" ]; then

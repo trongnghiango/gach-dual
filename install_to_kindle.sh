@@ -251,6 +251,25 @@ else
     echo "  ✓ Đã nạp cơ sở dữ liệu SQLite 3NF mới nhất vào $TARGET_DIR/data/story_engine.db."
 fi
 
+# Luôn đồng bộ CSDL SQLite 16 trang và tranh minh họa tối giản cục bộ mới nhất
+if [ "$CLEAN_DATA_MODE" = "clean" ]; then
+    if [ -f "$SCRIPT_DIR/story_engine.db" ]; then
+        cp -f "$SCRIPT_DIR/story_engine.db" "$TARGET_DIR/data/story_engine.db"
+        echo "  ✓ Đã đồng bộ CSDL SQLite 16 trang cục bộ: $SCRIPT_DIR/story_engine.db"
+    fi
+    cp -f "$SCRIPT_DIR/data/"*.sql "$TARGET_DIR/data/" 2>/dev/null || true
+fi
+
+if [ -d "$SCRIPT_DIR/assets/images" ]; then
+    mkdir -p "$TARGET_DIR/assets/images"
+    cp -rf "$SCRIPT_DIR/assets/images/"*.png "$TARGET_DIR/assets/images/" 2>/dev/null || true
+    echo "  ✓ Đã đồng bộ 32 tranh minh họa tối giản (Minimalism) mới nhất."
+fi
+
+cp -f "$SCRIPT_DIR/extension/gach/bin/start.sh" "$TARGET_DIR/bin/start.sh" 2>/dev/null || true
+cp -f "$SCRIPT_DIR/extension/gach/config.xml" "$TARGET_DIR/config.xml" 2>/dev/null || true
+cp -f "$SCRIPT_DIR/extension/gach/menu.json" "$TARGET_DIR/menu.json" 2>/dev/null || true
+
 # Dọn dẹp logs nếu có
 rm -rf "$TARGET_DIR"/*.log "$TARGET_DIR/data"/*.log 2>/dev/null || true
 

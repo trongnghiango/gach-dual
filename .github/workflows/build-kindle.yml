@@ -127,6 +127,7 @@ jobs:
 
           sqlite3 story_engine.db < data/schema.sql
           sqlite3 story_engine.db < data/seed_story_mit.sql
+          sqlite3 story_engine.db < data/seed_story_mit_16pages.sql
 
           # Sinh lại ảnh nếu chưa có sẵn
           if [ ! -f "assets/images/page1_bloom.png" ]; then

@@ -14,7 +14,19 @@ using namespace gach;
 
 static std::string read_text_file(const std::string& path) {
     std::ifstream file(path);
-    if (!file.is_open()) return "";
+    if (!file.is_open()) {
+        const char* home = std::getenv("GACH_HOME");
+        if (home) {
+            std::string alt = std::string(home) + "/" + path;
+            std::ifstream alt_file(alt);
+            if (alt_file.is_open()) {
+                std::stringstream buffer;
+                buffer << alt_file.rdbuf();
+                return buffer.str();
+            }
+        }
+        return "";
+    }
     std::stringstream buffer;
     buffer << file.rdbuf();
     return buffer.str();
@@ -56,8 +68,17 @@ int main(int argc, char** argv) {
     // 3. Khởi tạo Use Case Interactor
     application::StoryInteractor interactor(repo, renderer);
     if (!interactor.start_story(config.story_id)) {
-        std::cerr << "[ERROR] Failed to start story: " << config.story_id << std::endl;
-        return 1;
+        std::cout << "[WARN] Story '" << config.story_id << "' not found. Searching for available fallback stories..." << std::endl;
+        if (interactor.start_story("mit_ngay_tu_te")) {
+            config.story_id = "mit_ngay_tu_te";
+            std::cout << "[INFO] Successfully loaded story: mit_ngay_tu_te" << std::endl;
+        } else if (interactor.start_story("mit_tuoi_cay")) {
+            config.story_id = "mit_tuoi_cay";
+            std::cout << "[INFO] Successfully loaded story: mit_tuoi_cay" << std::endl;
+        } else {
+            std::cerr << "[ERROR] No valid story found in database at: " << config.db_path << std::endl;
+            return 1;
+        }
     }
 
     std::cout << "[INFO] Loaded story: '" << repo.story_title() << "' with " << repo.total_pages() << " pages." << std::endl;
