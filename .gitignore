@@ -1,6 +1,6 @@
 # Build outputs & Object files
-build/
-bin/
+/build/
+/bin/
 *.o
 *.a
 *.so
