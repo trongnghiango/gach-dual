@@ -1,6 +1,11 @@
 -- Kịch bản trọn vẹn 16 trang tập truyện bạn Mít: "Một Ngày Tử Tế Của Bé Mít"
 -- Triết lý: Gốc (Nhân lành) -> Âm (Ái ngữ) -> Cảnh (Duyên tốt) -> Hạnh (Quả ngọt)
 
+DELETE FROM choices WHERE target_id IN (SELECT id FROM phonics_targets WHERE story_id = 'mit_ngay_tu_te');
+DELETE FROM phonics_targets WHERE story_id = 'mit_ngay_tu_te';
+DELETE FROM pages WHERE story_id = 'mit_ngay_tu_te';
+DELETE FROM stories WHERE id = 'mit_ngay_tu_te';
+
 INSERT OR REPLACE INTO stories (id, title, total_pages) VALUES 
 ('mit_ngay_tu_te', 'Một ngày tử tế của bé Mít', 16);
 
@@ -18,7 +23,7 @@ INSERT OR REPLACE INTO choices (target_id, display_text, is_correct) VALUES
 INSERT OR REPLACE INTO pages (story_id, page_number, lead_text, initial_image_path, transform_image_path) VALUES
 ('mit_ngay_tu_te', 2, 
  'Mẹ đang chuẩn bị bữa cơm trưa trong bếp ấm. Bạn Mít ngồi bên chiếc rổ nhỏ, chăm chỉ giúp mẹ nhặt từng cọng rau tươi ngon...',
- 'assets/images/page2_leaves.png', 'assets/images/page2_green.png');
+ 'assets/images/page2_dry.png', 'assets/images/page2_bloom.png');
 INSERT OR REPLACE INTO phonics_targets (id, story_id, page_number, full_word, onset, rhyme, tone, missing_part, target_text) VALUES
 (2, 'mit_ngay_tu_te', 2, 'rau', 'r', 'au', 0, 'RHYME', 'au');
 INSERT OR REPLACE INTO choices (target_id, display_text, is_correct) VALUES
@@ -28,7 +33,7 @@ INSERT OR REPLACE INTO choices (target_id, display_text, is_correct) VALUES
 INSERT OR REPLACE INTO pages (story_id, page_number, lead_text, initial_image_path, transform_image_path) VALUES
 ('mit_ngay_tu_te', 3, 
  'Chú mèo mướp kêu meo meo ngoan ngoãn dưới chân bàn. Bạn Mít nhẹ nhàng chia một phần cơm ấm thơm phức cho mèo con...',
- 'assets/images/page3_grandma.png', 'assets/images/page3_hug.png');
+ 'assets/images/page3_dry.png', 'assets/images/page3_bloom.png');
 INSERT OR REPLACE INTO phonics_targets (id, story_id, page_number, full_word, onset, rhyme, tone, missing_part, target_text) VALUES
 (3, 'mit_ngay_tu_te', 3, 'cơm', 'c', 'ơm', 0, 'RHYME', 'ơm');
 INSERT OR REPLACE INTO choices (target_id, display_text, is_correct) VALUES

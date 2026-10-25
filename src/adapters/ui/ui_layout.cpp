@@ -10,52 +10,56 @@ void UILayout::update_resolution(int screen_w, int screen_h) noexcept {
 
     double scale = static_cast<double>(m_screen_width) / 1072.0;
 
-    // Khởi tạo cây bố cục InkFlex Column
+    // Cây bố cục InkFlex phong cách Tối Giản (Minimalism)
+    // Khoảng đệm thoáng đãng (Breathable negative space)
     auto root = make_column("page_root");
     root->set_size(m_screen_width, m_screen_height);
-    root->set_padding(Edges::symmetric(static_cast<int>(10 * scale), static_cast<int>(34 * scale)));
-    root->set_gap(static_cast<int>(18 * scale));
+    root->set_padding(Edges{
+        static_cast<int>(24 * scale),
+        static_cast<int>(48 * scale),
+        static_cast<int>(36 * scale),
+        static_cast<int>(48 * scale)
+    });
+    root->set_gap(static_cast<int>(24 * scale));
 
-    // 1. Nút Thoát ứng dụng (Absolute Positioning, Top-Right, zIndex = 10)
-    int exit_w = static_cast<int>(140 * scale);
-    int exit_h = static_cast<int>(42 * scale);
+    // 1. Nút Thoát ứng dụng tối giản (Top-Right, Absolute)
+    int exit_w = static_cast<int>(95 * scale);
+    int exit_h = static_cast<int>(36 * scale);
     auto exit_btn = make_item("exit_btn");
     exit_btn->set_position(PositionType::Absolute);
-    exit_btn->set_top(static_cast<int>(10 * scale));
-    exit_btn->set_right(static_cast<int>(34 * scale));
+    exit_btn->set_top(static_cast<int>(24 * scale));
+    exit_btn->set_right(static_cast<int>(48 * scale));
     exit_btn->set_size(exit_w, exit_h);
     exit_btn->set_z_index(10);
     root->add_child(exit_btn);
 
-    // 2. Vùng Header / Chỉ báo số trang (Relative, fixed height ~36px)
+    // 2. Chỉ báo số trang tinh tế ở đỉnh (Header)
     auto header = make_item("header");
     header->set_height(static_cast<int>(36 * scale));
     root->add_child(header);
 
-    // 3. Khung Tranh Minh Họa (Hero Picture Frame)
-    // Tự động co giãn (flex_grow = 1.0f) chiếm trọn phần không gian thị giác đẹp nhất!
+    // 3. Khung Tranh Minh Họa Ehon Tối Giản (Frameless Art)
     auto hero = make_item("hero_image");
     hero->set_flex_grow(1.0f);
-    hero->set_min_height(static_cast<int>(m_screen_height * 0.35));
+    hero->set_min_height(static_cast<int>(m_screen_height * 0.38));
     hero->set_max_height(static_cast<int>(m_screen_height * 0.46));
     root->add_child(hero);
 
-    // 4. Lời Dẫn Truyện (Story Lead Text Card)
-    // Tự động tính toán theo 2 dòng văn bản chuẩn
-    int line_h = static_cast<int>(62 * scale);
+    // 4. Lời Dẫn Truyện (Typography rõ ràng, thoáng đãng)
+    int line_h = static_cast<int>(56 * scale);
     auto text_card = make_item("story_text");
-    text_card->set_height(2 * line_h + static_cast<int>(16 * scale));
+    text_card->set_height(2 * line_h + static_cast<int>(20 * scale));
     root->add_child(text_card);
 
-    // 5. Khay Gỗ Montessori Âm Vị (Visual Phonics Tray)
+    // 5. Thẻ Tiêu Điểm Ghép Vần Tối Giản (Phonics Focus Slot)
     auto phonics_tray = make_item("phonics_tray");
-    phonics_tray->set_height(static_cast<int>(108 * scale));
+    phonics_tray->set_height(static_cast<int>(110 * scale));
     root->add_child(phonics_tray);
 
-    // 6. Vùng Tương Tác: Khối Gỗ Chữ Cái (Row Flexbox)
+    // 6. Các Mảnh Ghép Chữ Cái Tối Giản (Minimal Choice Tiles)
     auto choices_row = make_row("choices_row");
-    choices_row->set_height(static_cast<int>(135 * scale));
-    choices_row->set_gap(static_cast<int>(20 * scale));
+    choices_row->set_height(static_cast<int>(145 * scale));
+    choices_row->set_gap(static_cast<int>(26 * scale));
     choices_row->set_justify(JustifyContent::SpaceBetween);
 
     for (int i = 0; i < 3; ++i) {
@@ -65,7 +69,7 @@ void UILayout::update_resolution(int screen_w, int screen_h) noexcept {
     }
     root->add_child(choices_row);
 
-    // Tính toán bố cục InkFlex đệ quy (Toán học chống chồng lấn 100%)
+    // Tính toán bố cục InkFlex đệ quy không chồng lấn
     root->layout(0, 0, m_screen_width, m_screen_height);
 
     // Gán kết quả tính toán vào các vùng Rect
@@ -80,8 +84,8 @@ void UILayout::update_resolution(int screen_w, int screen_h) noexcept {
     }
     m_choice_rects[3] = Rect{ 0, 0, 0, 0 };
 
-    // Nút chuyển trang (Next Button) nằm ở cùng vùng tầng tương tác, căn giữa màn hình
-    int next_w = static_cast<int>(520 * scale);
+    // Nút chuyển trang (Next CTA) tối giản, căn giữa
+    int next_w = static_cast<int>(480 * scale);
     int next_h = static_cast<int>(100 * scale);
     int next_x = (m_screen_width - next_w) / 2;
     int next_y = choices_row->computed_y + (choices_row->computed_h - next_h) / 2;

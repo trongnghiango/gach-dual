@@ -23,13 +23,10 @@ void draw_ehon_illustration(const std::string& filename, int page, bool is_bloom
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
     cairo_paint(cr);
 
-    // 2. Viền khung tranh bo góc mềm mại
-    cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
-    cairo_set_line_width(cr, 4.0);
-    draw_rounded_rect(cr, 16, 16, W - 32, H - 32, 20.0);
-    cairo_stroke(cr);
+    // 2. Nét mực đen E-Ink sắc nét
+    cairo_set_source_rgb(cr, 0.12, 0.12, 0.12);
 
-    // 3. Đường mặt đất / sàn nhà
+    // 3. Đường mặt đất / sàn nhà (Tối giản không viền khung đóng hộp)
     cairo_set_line_width(cr, 3.5);
     cairo_move_to(cr, 30, H * 0.72);
     cairo_curve_to(cr, W * 0.3, H * 0.70, W * 0.6, H * 0.74, W - 30, H * 0.72);
