@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "metadata": {
+    "id": "mit_tuoi_cay_v2",
+    "title": "Mít tưới cây cho bà",
+    "total_pages": 3,
+    "target_age": "3-6",
+    "author": "Cộng Đồng GACH",
+    "language": "vi-VN",
+    "pedagogy": "visual_phonics",
+    "story_flow_mode": "linear"
+  },
+  "asset_manifest": {
+    "backdrops": {
+      "bg_sunny_sky": {
+        "path": "assets/images/bg_sky.png",
+        "description": "Bầu trời nắng dịu dàng"
+      }
+    },
+    "grounds": {
+      "ground_scribble": {
+        "style": "organic_scribble",
+        "y_ratio": 0.72
+      }
+    },
+    "sprites": {
+      "actor_mit": {
+        "name": "Bé Mít",
+        "role": "actor",
+        "states": {
+          "idle": "assets/images/mit_idle.png",
+          "watering": "assets/images/mit_watering.png",
+          "happy": "assets/images/mit_happy.png"
+        }
+      },
+      "receiver_plant": {
+        "name": "Khóm hoa",
+        "role": "receiver",
+        "states": {
+          "dry": "assets/images/plant_dry.png",
+          "bloomed": "assets/images/plant_bloom.png"
+        }
+      }
+    }
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "page_id": "page_water_flower",
+      "lead_text": "Trưa hè nắng gắt, khóm hoa của bà đang khô héo vì khát nước. Bạn Mít cầm bình nhỏ ra tưới mát cho cây...",
+      "interaction_type": "phonics_single_beat",
+      "stage_setup": {
+        "backdrop_ref": "bg_sunny_sky",
+        "ground_ref": "ground_scribble",
+        "legacy_initial_image": "assets/images/page1_dry.png",
+        "legacy_transform_image": "assets/images/page1_bloom.png",
+        "actors": [
+          {
+            "sprite_id": "actor_mit",
+            "x": 375,
+            "y": 420,
+            "initial_state": "watering",
+            "transform_state": "happy"
+          },
+          {
+            "sprite_id": "receiver_plant",
+            "x": 770,
+            "y": 460,
+            "initial_state": "dry",
+            "transform_state": "bloomed"
+          }
+        ]
+      },
+      "phonics_payload": {
+        "full_word": "tưới",
+        "onset": "t",
+        "rhyme": "ươi",
+        "tone": 2,
+        "missing_part": "ONSET",
+        "choices": [
+          {
+            "text": "t",
+            "is_correct": true
+          },
+          {
+            "text": "c",
+            "is_correct": false
+          },
+          {
+            "text": "b",
+            "is_correct": false
+          }
+        ]
+      },
+      "transition_timings": {
+        "observe_delay_ms": 2500,
+        "hint_delay_ms": 6000,
+        "transform_delay_ms": 2000
+      }
+    }
+  ]
+}

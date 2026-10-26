@@ -1,0 +1,331 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GACH Community Story Specification Schema",
+  "description": "Standard schema for community-created interactive phonics story packages for GACH Engine",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "metadata",
+    "pages"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "total_pages",
+        "target_age"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Unique identifier for the story package (e.g., mit_ngay_tu_te)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable title of the story"
+        },
+        "author": {
+          "type": "string"
+        },
+        "total_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "target_age": {
+          "type": "string",
+          "description": "Target age group, e.g., '3-6'"
+        },
+        "language": {
+          "type": "string",
+          "default": "vi-VN"
+        },
+        "pedagogy": {
+          "type": "string",
+          "enum": [
+            "visual_phonics",
+            "comprehensible_input",
+            "story_listening",
+            "interactive_ethics"
+          ],
+          "default": "visual_phonics"
+        },
+        "story_flow_mode": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "branching",
+            "free_explore"
+          ],
+          "default": "linear"
+        }
+      }
+    },
+    "asset_manifest": {
+      "type": "object",
+      "properties": {
+        "backdrops": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "path"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "grounds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "style",
+              "y_ratio"
+            ],
+            "properties": {
+              "style": {
+                "type": "string",
+                "enum": [
+                  "organic_scribble",
+                  "minimal_line",
+                  "indoor_floor"
+                ]
+              },
+              "y_ratio": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 0.9,
+                "default": 0.72
+              }
+            }
+          }
+        },
+        "sprites": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "name",
+              "states"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "actor",
+                  "tool",
+                  "receiver",
+                  "scenery"
+                ]
+              },
+              "states": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "page_number",
+          "lead_text",
+          "interaction_type"
+        ],
+        "properties": {
+          "page_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_id": {
+            "type": "string",
+            "description": "Optional unique slug for branching jumps (e.g. page_choose_apple)"
+          },
+          "lead_text": {
+            "type": "string",
+            "description": "Story lead narration displayed in large, clean typography"
+          },
+          "interaction_type": {
+            "type": "string",
+            "enum": [
+              "phonics_single_beat",
+              "phonics_multi_step",
+              "stage_object_interact",
+              "branch_choice",
+              "pure_narrative"
+            ],
+            "default": "phonics_single_beat"
+          },
+          "stage_setup": {
+            "type": "object",
+            "properties": {
+              "backdrop_ref": {
+                "type": "string"
+              },
+              "ground_ref": {
+                "type": "string"
+              },
+              "legacy_initial_image": {
+                "type": "string"
+              },
+              "legacy_transform_image": {
+                "type": "string"
+              },
+              "actors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "sprite_id",
+                    "x",
+                    "y",
+                    "initial_state",
+                    "transform_state"
+                  ],
+                  "properties": {
+                    "sprite_id": {
+                      "type": "string"
+                    },
+                    "x": {
+                      "type": "integer"
+                    },
+                    "y": {
+                      "type": "integer"
+                    },
+                    "initial_state": {
+                      "type": "string"
+                    },
+                    "transform_state": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "phonics_payload": {
+            "type": "object",
+            "properties": {
+              "full_word": {
+                "type": "string"
+              },
+              "onset": {
+                "type": "string"
+              },
+              "rhyme": {
+                "type": "string"
+              },
+              "tone": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 5
+              },
+              "missing_part": {
+                "type": "string",
+                "enum": [
+                  "ONSET",
+                  "RHYME"
+                ]
+              },
+              "choices": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "text",
+                    "is_correct"
+                  ],
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "is_correct": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "branch_payload": {
+            "type": "object",
+            "properties": {
+              "prompt_question": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 3,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "label",
+                    "target_page_number"
+                  ],
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "target_page_number": {
+                      "type": "integer"
+                    },
+                    "moral_impact": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "transition_timings": {
+            "type": "object",
+            "properties": {
+              "observe_delay_ms": {
+                "type": "integer",
+                "default": 2500
+              },
+              "hint_delay_ms": {
+                "type": "integer",
+                "default": 6000
+              },
+              "transform_delay_ms": {
+                "type": "integer",
+                "default": 2000
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
