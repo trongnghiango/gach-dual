@@ -16,8 +16,8 @@ void GtkTouchAdapter::initialize(int argc, char** argv, int width, int height) {
     m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 #if !GTK_CHECK_VERSION(3, 0, 0)
-    // Tương thích Kindle OS Window Manager (GTK 2.0): Toàn màn hình, không viền
-    gtk_window_set_title(GTK_WINDOW(m_window), "L:A_N:application_ID:com.trongnghiango.gach_PC:T");
+    // Tương thích Kindle OS Window Manager (GTK 2.0): Toàn màn hình, không viền, ẩn Status Bar (PC:N = Pillow Chrome None)
+    gtk_window_set_title(GTK_WINDOW(m_window), "L:A_N:application_ID:com.trongnghiango.gach_PC:N");
     gtk_window_fullscreen(GTK_WINDOW(m_window));
     gtk_window_set_decorated(GTK_WINDOW(m_window), FALSE);
 #else
