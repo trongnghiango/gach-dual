@@ -14,8 +14,8 @@ mkdir -p "$BUILD_DIR/bin" "$BUILD_DIR/data" "$BUILD_DIR/assets/images"
 # 1. Sao chép KUAL configuration
 cp "$ROOT_DIR/extension/gach/config.xml" "$BUILD_DIR/"
 cp "$ROOT_DIR/extension/gach/menu.json" "$BUILD_DIR/"
-cp "$ROOT_DIR/extension/gach/bin/start.sh" "$BUILD_DIR/bin/"
-chmod +x "$BUILD_DIR/bin/start.sh"
+cp "$ROOT_DIR/extension/gach/bin/"*.sh "$BUILD_DIR/bin/"
+chmod +x "$BUILD_DIR/bin/"*.sh
 
 # 2. Sao chép Binary thực thi
 if [ -f "$ROOT_DIR/bin/gach" ]; then

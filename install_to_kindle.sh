@@ -266,7 +266,7 @@ if [ -d "$SCRIPT_DIR/assets/images" ]; then
     echo "  ✓ Đã đồng bộ 32 tranh minh họa tối giản (Minimalism) mới nhất."
 fi
 
-cp -f "$SCRIPT_DIR/extension/gach/bin/start.sh" "$TARGET_DIR/bin/start.sh" 2>/dev/null || true
+cp -f "$SCRIPT_DIR/extension/gach/bin/"*.sh "$TARGET_DIR/bin/" 2>/dev/null || true
 cp -f "$SCRIPT_DIR/extension/gach/config.xml" "$TARGET_DIR/config.xml" 2>/dev/null || true
 cp -f "$SCRIPT_DIR/extension/gach/menu.json" "$TARGET_DIR/menu.json" 2>/dev/null || true
 
@@ -274,7 +274,7 @@ cp -f "$SCRIPT_DIR/extension/gach/menu.json" "$TARGET_DIR/menu.json" 2>/dev/null
 rm -rf "$TARGET_DIR"/*.log "$TARGET_DIR/data"/*.log 2>/dev/null || true
 
 # Cấp quyền thực thi
-chmod +x "$TARGET_DIR/bin/start.sh" "$TARGET_DIR/bin/gach" 2>/dev/null || true
+chmod +x "$TARGET_DIR/bin/"*.sh "$TARGET_DIR/bin/gach" 2>/dev/null || true
 
 # 8. Đồng bộ chip nhớ Kindle (sync)
 echo -e "${CYAN}[6/6] Đồng bộ dữ liệu xuống chip nhớ Kindle (sync)...${NC}"

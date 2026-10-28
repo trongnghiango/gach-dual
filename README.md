@@ -111,16 +111,37 @@ Kết quả sẽ tạo ra file nén siêu nhẹ **`gach-kual.zip`** ($sim 204	ex
 
 ---
 
-## 5. CÀI ĐẶT LÊN KINDLE PAPERWHITE
+## 5. CÀI ĐẶT & CẬP NHẬT LÊN KINDLE PAPERWHITE
 
+Bạn có thể lựa chọn một trong hai phương pháp cài đặt/cập nhật dưới đây:
+
+### 5.1. Phương Pháp 1: Không Dây Qua KOReader (Không Cần Cáp USB) — KHUYÊN DÙNG ⭐
+Sau khi tải hoặc build được tệp `gach-kual.zip`, bạn hoàn toàn có thể gửi và cài đặt trực tiếp từ điện thoại hoặc máy tính qua WiFi:
+
+1. **Gửi file ZIP sang Kindle qua KOReader**:
+   - Mở ứng dụng **KOReader** trên Kindle PW2/PW3.
+   - Chọn menu **Mạng (Network)** $\rightarrow$ Bật **Máy chủ FTP (FTP Server)** hoặc **Nhận tệp (Receive files / Web HTTP Server)**.
+   - Trên điện thoại/máy tính cùng mạng WiFi:
+     - Truy cập địa chỉ hiển thị trên màn hình Kindle (qua trình duyệt web hoặc phần mềm FTP như FileZilla/WinSCP).
+     - Tải tệp `gach-kual.zip` lên thư mục `/mnt/us/documents/` (hoặc thư mục gốc `/mnt/us/`).
+2. **Cài đặt / Cập nhật tự động trên KUAL**:
+   - Thoát KOReader về màn hình chính Kindle, mở ứng dụng **KUAL**.
+   - Chạm vào mục **GACH** $\rightarrow$ Chọn **Cập nhật từ ZIP (Update from ZIP)**.
+   - Script tự động trên Kindle sẽ:
+     - Tự động nhận diện file ZIP trong `/mnt/us/documents/` hoặc `/mnt/us/`.
+     - Tự động sao lưu cơ sở dữ liệu `story_engine.db` (bảo toàn 100% tiến độ đọc của bé).
+     - Giải nén bản mới, cấp quyền thực thi `chmod +x` và đồng bộ chip nhớ flash (`sync`).
+     - Hiển thị thông báo trạng thái trực tiếp trên màn hình E-Ink qua `eips`.
+3. Chạm vào **GACH Story Phonics** trên KUAL để bắt đầu đọc ngay!
+
+### 5.2. Phương Pháp 2: Cắm Cáp USB Truyền Thống
 1. Kết nối Kindle với máy tính qua cáp USB.
-2. Giải nén toàn bộ nội dung của tệp `gach-kual.zip` vào thư mục:
-   ```text
-   /mnt/us/extensions/
+2. Chạy trình cài đặt tự động an toàn:
+   ```bash
+   ./install_to_kindle.sh
    ```
-   (Đường dẫn thư mục sau khi giải nén sẽ là `/mnt/us/extensions/gach/`).
-3. Ngắt kết nối USB an toàn.
-4. Mở menu **KUAL** trên màn hình Kindle và chạm vào mục **GACH Story Phonics (Bé Mít)** để bắt đầu!
+   *(Script sẽ tự động mount, kiểm tra phân vùng FAT32, cho phép chọn làm sạch hoặc giữ lại database tiến độ đọc, giải nén và sync an toàn).*
+3. Ngắt kết nối USB an toàn, mở **KUAL** trên Kindle và chạm vào **GACH Story Phonics**!
 
 
 ---

@@ -144,7 +144,7 @@ jobs:
           cp builddir_kindlehf/gach bin/gach
 
           chmod +x scripts/package-kual.sh
-          chmod +x extension/gach/bin/start.sh
+          chmod +x extension/gach/bin/*.sh
 
           ./scripts/package-kual.sh
 
