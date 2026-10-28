@@ -4,11 +4,6 @@
       "name": "GACH Story Phonics",
       "priority": 1,
       "action": "bin/start.sh"
-    },
-    {
-      "name": "Cap nhat tu ZIP (Update from ZIP)",
-      "priority": 2,
-      "action": "bin/install_from_zip.sh"
     }
   ]
 }
